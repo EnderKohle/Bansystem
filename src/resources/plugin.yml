@@ -1,0 +1,14 @@
+name: Bansystem
+version: 1.5
+author: Tobi
+main: net.coalcube.bansystem.spigot.BanSystem
+commands:
+  ban:
+  unban:
+  history:
+  deletehistory:
+  unmute:
+  kick:
+  check:
+  bansystem:
+  bansys:
