@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 
 import net.coalcube.bansystem.core.util.Type;
 import net.coalcube.bansystem.core.util.URLUtils;
@@ -28,7 +29,6 @@ public class LoginListener implements Listener {
 		if (BanSystem.mysql.isConnected()) {
 			Banmanager bm = new Banmanager();
 			Player p = e.getPlayer();
-
 			if (bm.isBannedNetwork(p.getUniqueId())) {
 				if (bm.getEnd(p.getUniqueId(), bm.getReasonNetwork(p.getUniqueId())) > System.currentTimeMillis()
 						|| bm.getEnd(p.getUniqueId(), bm.getReasonNetwork(p.getUniqueId())) == -1) {
@@ -38,6 +38,7 @@ public class LoginListener implements Listener {
 									bm.getRemainingTime(p.getUniqueId(), bm.getReasonNetwork(p.getUniqueId())))
 							.replaceAll("&", "§");
 					p.kickPlayer(component);
+					e.setJoinMessage("");
 					isCancelled = true;
 					if (bm.needIP(p.getUniqueId())) {
 						bm.setIP(p.getUniqueId(), p.getAddress().getAddress());
@@ -152,6 +153,13 @@ public class LoginListener implements Listener {
 					}
 				}, 20 * 1);
 			}
+		}
+	}
+	@EventHandler
+	public void onDisconnect(PlayerQuitEvent e) {
+		Player p = e.getPlayer();
+		if (new Banmanager().isBannedNetwork(p.getUniqueId())) {
+			e.setQuitMessage("");
 		}
 	}
 }

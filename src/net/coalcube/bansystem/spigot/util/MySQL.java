@@ -9,9 +9,9 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 
-import net.coalcube.bansystem.bungee.BanSystem;
-import net.md_5.bungee.api.ProxyServer;
-import net.md_5.bungee.api.chat.TextComponent;
+import org.bukkit.Bukkit;
+
+import net.coalcube.bansystem.spigot.BanSystem;
 
 public class MySQL {
 
@@ -35,10 +35,10 @@ public class MySQL {
 	public void connect() {
 		try {
 			con = DriverManager.getConnection("jdbc:mysql://" + host + ":" + port + "/" + database + "?autoReconnect=true", user, password);
-			ProxyServer.getInstance().getConsole().sendMessage(new TextComponent(BanSystem.PREFIX+"§7Die Verbindung zur MySQL Datenbank wurde §eerfolgreich §7hergestellt."));
+			Bukkit.getConsoleSender().sendMessage(BanSystem.PREFIX+"§7Die Verbindung zur MySQL Datenbank wurde §eerfolgreich §7hergestellt.");
 		} catch (SQLException ex) {
-			ProxyServer.getInstance().getConsole().sendMessage(new TextComponent(BanSystem.PREFIX+"§cDie Verbindung zur MySQL Datenbank konnte nicht hergestellt werden."));
-			ProxyServer.getInstance().getConsole().sendMessage(new TextComponent(BanSystem.PREFIX+"§cBitte überprüfe die Anmeldedaten für die datenbank in der §econifg.yml§c."));
+			Bukkit.getConsoleSender().sendMessage(BanSystem.PREFIX+"§cDie Verbindung zur MySQL Datenbank konnte nicht hergestellt werden.");
+			Bukkit.getConsoleSender().sendMessage(BanSystem.PREFIX+"§cBitte überprüfe die Anmeldedaten für die datenbank in der §econifg.yml§c.");
 		}
 	}
 
@@ -46,9 +46,9 @@ public class MySQL {
 		try {
 			con.close();
 
-			ProxyServer.getInstance().getConsole().sendMessage(new TextComponent(BanSystem.PREFIX+"§7Verbindung zur Datenbank §egetrennt§7."));
+			Bukkit.getConsoleSender().sendMessage(BanSystem.PREFIX+"§7Verbindung zur Datenbank §egetrennt§7.");
 		} catch (SQLException ex) {
-			ProxyServer.getInstance().getConsole().sendMessage(new TextComponent(BanSystem.PREFIX+"§cVerbindung zur Datenbank konnte nicht getrennt werden."));
+			Bukkit.getConsoleSender().sendMessage(BanSystem.PREFIX+"§cVerbindung zur Datenbank konnte nicht getrennt werden.");
 		}
 	}
 

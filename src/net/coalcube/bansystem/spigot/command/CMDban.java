@@ -37,7 +37,6 @@ public class CMDban implements CommandExecutor, TabExecutor {
 						return false;
 					}
 				}
-
 				if (args.length == 2) {
 					if (!BanSystem.config.getConfigurationSection("IDs").getKeys(false).contains(args[1])) {
 						sender.sendMessage(
@@ -45,7 +44,7 @@ public class CMDban implements CommandExecutor, TabExecutor {
 						reason = null;
 						return false;
 					}
-					for (String key : BanSystem.config.getStringList("IDs")) {
+					for (String key : BanSystem.config.getConfigurationSection("IDs").getKeys(false)) {
 						if (args[1].equalsIgnoreCase(key)) {
 							if (BanSystem.config.getBoolean("IDs." + key + ".onlyAdmins")) {
 								if (!sender.hasPermission("bansys.ban.admin")) {
@@ -77,7 +76,6 @@ public class CMDban implements CommandExecutor, TabExecutor {
 						if(sender.hasPermission("bansys.ban."+id) || sender.hasPermission("bansys.ban.all") || sender.hasPermission("bansys.ban.admin")) {
 							ban(sender, id, type, dauer, reason);
 						} else sender.sendMessage(BanSystem.messages.getString("Ban.ID.NoPermission").replaceAll("%P%", BanSystem.PREFIX));
-						
 					}
 				} else {
 					sender.sendMessage(BanSystem.messages.getString("Ban.ID.Listlayout.heading").replaceAll("%P%", BanSystem.PREFIX));
@@ -118,11 +116,11 @@ public class CMDban implements CommandExecutor, TabExecutor {
 					sender.sendMessage(BanSystem.messages.getString("Ban.cannotbanteammembers").replaceAll("%P%",
 								BanSystem.PREFIX).replaceAll("&", "§"));
 					return;
-				} else { // sowas bitte in ne core package also so: heilige scheiße ... du hast ernsthaft alles 2x? auch das das garnicht software abhängig ist? :( ich bin enttäuscht xD  maxchD das core package!
-					banmanager.ban(reason, dauer, ersteller, type, target.getUniqueId(), // warte manche sachen sind software abhängig ja  die musst du dann extra machen aber ehrlich gesagt würde ich da eigentlich mit maven modulen: bungee core, spigot arbeiten weil dein problem ist z.b bungee hat ne andere version von google guava als spigot und dann nimmt eclipse natürlich das neuere von bungee aber wenn du es dann auf spigot ausführst gehts auf einmal net und du fragst dich dann häää eclipse zeigt doch keinen fehler an aber da steht dann sowas wie MethodNotFoundException xD okay xD hatte ich mal also man sollte das eig. aufspalten aber du hast vermutlich bis jz sowieso nix bei dem das zutrifft joa
+				} else {
+					banmanager.ban(reason, dauer, ersteller, type, target.getUniqueId(), 
 							target.getAddress().getAddress());
 				}
-				if (type == Type.NETWORK) { // der fully qualified name ist unnötig xD das war doch mal weil du die variable Type genannt hattest oder? mit großem t xD
+				if (type == Type.NETWORK) {
 					target.kickPlayer(
 							BanSystem.Banscreen.replaceAll("%Reason%", banmanager.getReasonNetwork(id)).replaceAll(
 									"%ReamingTime%", banmanager.getRemainingTime(id, banmanager.getReasonNetwork(id))).replaceAll("&", "§"));
