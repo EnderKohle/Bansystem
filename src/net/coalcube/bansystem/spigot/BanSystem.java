@@ -11,6 +11,8 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import net.coalcube.bansystem.core.util.Type;
+import net.coalcube.bansystem.core.util.UUIDFetcher;
 import net.coalcube.bansystem.spigot.command.CMDban;
 import net.coalcube.bansystem.spigot.command.CMDbansystem;
 import net.coalcube.bansystem.spigot.command.CMDcheck;
@@ -22,8 +24,6 @@ import net.coalcube.bansystem.spigot.command.CMDunmute;
 import net.coalcube.bansystem.spigot.listener.ChatListener;
 import net.coalcube.bansystem.spigot.listener.LoginListener;
 import net.coalcube.bansystem.spigot.util.MySQL;
-import net.coalcube.bansystem.spigot.util.Type;
-import net.coalcube.bansystem.spigot.util.UUIDFetcher;
 import net.coalcube.bansystem.spigot.util.UpdateChecker;
 
 public class BanSystem extends JavaPlugin {

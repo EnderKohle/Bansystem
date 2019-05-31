@@ -6,9 +6,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
+import net.coalcube.bansystem.core.util.Type;
 import net.coalcube.bansystem.spigot.BanSystem;
 import net.coalcube.bansystem.spigot.util.Banmanager;
-import net.coalcube.bansystem.spigot.util.Type;
 
 public class ChatListener implements Listener {
 	

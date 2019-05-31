@@ -11,6 +11,8 @@ import java.util.UUID;
 
 import org.bukkit.command.CommandSender;
 
+import net.coalcube.bansystem.core.util.Type;
+import net.coalcube.bansystem.core.util.UUIDFetcher;
 import net.coalcube.bansystem.spigot.BanSystem;
 
 public class Banmanager {
@@ -57,7 +59,7 @@ public class Banmanager {
 		byte lvl;
 		Type type = null;
 		long dauer = 0;
-		for (String key : BanSystem.config.getSection("IDs").getKeys()) {
+		for (String key : BanSystem.config.getConfigurationSection("IDs").getKeys(false)) {
 			if (id == Integer.parseInt(key)) {
 				reason = BanSystem.config.getString("IDs." + key + ".reason");
 				type = Type.valueOf(BanSystem.config.getString("IDs." + key + ".type"));
@@ -66,7 +68,7 @@ public class Banmanager {
 				} else {
 					lvl = 1;
 				}
-				for (String lvlkey : BanSystem.config.getSection("IDs." + key + ".lvl").getKeys()) {
+				for (String lvlkey : BanSystem.config.getConfigurationSection("IDs." + key + ".lvl").getKeys(false)) {
 					if ((byte) Byte.valueOf(lvlkey) == lvl) {
 						dauer = BanSystem.config.getLong("IDs." + key + ".lvl." + lvlkey + ".duration");
 					}
@@ -150,8 +152,6 @@ public class Banmanager {
 		}
 		return "unbekannt";
 	}
-
-	@SuppressWarnings("deprecation")
 	public void sendHistorys(UUID id, CommandSender sender) {
 		ResultSet rs = BanSystem.mysql.getResult(
 				"SELECT Grund,Erstelldatum,Ersteller,IP,Type,duration FROM `banhistory` WHERE UUID='" + id + "'");

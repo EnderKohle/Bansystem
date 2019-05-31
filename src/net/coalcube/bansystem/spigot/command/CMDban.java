@@ -10,17 +10,16 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 
+import net.coalcube.bansystem.core.util.Type;
+import net.coalcube.bansystem.core.util.UUIDFetcher;
 import net.coalcube.bansystem.spigot.BanSystem;
 import net.coalcube.bansystem.spigot.util.Banmanager;
 import net.coalcube.bansystem.spigot.util.TabCompleteUtil;
-import net.coalcube.bansystem.spigot.util.Type;
-import net.coalcube.bansystem.spigot.util.UUIDFetcher;
 
 public class CMDban implements CommandExecutor, TabExecutor {
 
 	private Banmanager banmanager = new Banmanager();
-
-	@SuppressWarnings("deprecation")
+	
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String lable, String[] args) {
 		Type type = null;
@@ -40,13 +39,13 @@ public class CMDban implements CommandExecutor, TabExecutor {
 				}
 
 				if (args.length == 2) {
-					if (!BanSystem.config.getSection("IDs").getKeys().contains(args[1])) {
+					if (!BanSystem.config.getConfigurationSection("IDs").getKeys(false).contains(args[1])) {
 						sender.sendMessage(
 								BanSystem.messages.getString("Ban.invalidinput").replaceAll("%P%", BanSystem.PREFIX).replaceAll("&", "§"));
 						reason = null;
 						return false;
 					}
-					for (String key : BanSystem.config.get("IDs")) {
+					for (String key : BanSystem.config.getStringList("IDs")) {
 						if (args[1].equalsIgnoreCase(key)) {
 							if (BanSystem.config.getBoolean("IDs." + key + ".onlyAdmins")) {
 								if (!sender.hasPermission("bansys.ban.admin")) {
@@ -62,7 +61,7 @@ public class CMDban implements CommandExecutor, TabExecutor {
 							} else {
 								lvl = 1;
 							}
-							for (String lvlkey : BanSystem.config.getSection("IDs." + key + ".lvl").getKeys()) {
+							for (String lvlkey : BanSystem.config.getConfigurationSection("IDs." + key + ".lvl").getKeys(false)) {
 								if ((byte) Byte.valueOf(lvlkey) == lvl) {
 									dauer = BanSystem.config.getLong("IDs." + key + ".lvl." + lvlkey + ".duration");
 								}
@@ -82,7 +81,7 @@ public class CMDban implements CommandExecutor, TabExecutor {
 					}
 				} else {
 					sender.sendMessage(BanSystem.messages.getString("Ban.ID.Listlayout.heading").replaceAll("%P%", BanSystem.PREFIX));
-					for (String key : BanSystem.config.getSection("IDs").getKeys()) {
+					for (String key : BanSystem.config.getConfigurationSection("IDs").getKeys(false)) {
 						if(BanSystem.config.getBoolean("IDs." + key + ".onlyAdmins")) {
 							sender.sendMessage(BanSystem.messages.getString("Ban.ID.Listlayout.IDs.onlyadmins")
 									.replaceAll("%ID%", key)
@@ -106,9 +105,9 @@ public class CMDban implements CommandExecutor, TabExecutor {
 		} else {
 			sender.sendMessage(BanSystem.NOPERMISSION);
 		}
+		return false;
 	}
-
-	@SuppressWarnings({ "deprecation" })
+	
 	private void ban(CommandSender sender, UUID id, Type type, long dauer, String reason) {
 		String ersteller = sender.getName();
 		if ((type == Type.CHAT && !banmanager.isBannedChat(id)
@@ -119,11 +118,11 @@ public class CMDban implements CommandExecutor, TabExecutor {
 					sender.sendMessage(BanSystem.messages.getString("Ban.cannotbanteammembers").replaceAll("%P%",
 								BanSystem.PREFIX).replaceAll("&", "§"));
 					return;
-				} else {
-					banmanager.ban(reason, dauer, ersteller, type, target.getUniqueId(),
+				} else { // sowas bitte in ne core package also so: heilige scheiße ... du hast ernsthaft alles 2x? auch das das garnicht software abhängig ist? :( ich bin enttäuscht xD  maxchD das core package!
+					banmanager.ban(reason, dauer, ersteller, type, target.getUniqueId(), // warte manche sachen sind software abhängig ja  die musst du dann extra machen aber ehrlich gesagt würde ich da eigentlich mit maven modulen: bungee core, spigot arbeiten weil dein problem ist z.b bungee hat ne andere version von google guava als spigot und dann nimmt eclipse natürlich das neuere von bungee aber wenn du es dann auf spigot ausführst gehts auf einmal net und du fragst dich dann häää eclipse zeigt doch keinen fehler an aber da steht dann sowas wie MethodNotFoundException xD okay xD hatte ich mal also man sollte das eig. aufspalten aber du hast vermutlich bis jz sowieso nix bei dem das zutrifft joa
 							target.getAddress().getAddress());
 				}
-				if (type == net.coalcube.bansystem.spigot.util.Type.NETWORK) {
+				if (type == Type.NETWORK) { // der fully qualified name ist unnötig xD das war doch mal weil du die variable Type genannt hattest oder? mit großem t xD
 					target.kickPlayer(
 							BanSystem.Banscreen.replaceAll("%Reason%", banmanager.getReasonNetwork(id)).replaceAll(
 									"%ReamingTime%", banmanager.getRemainingTime(id, banmanager.getReasonNetwork(id))).replaceAll("&", "§"));

@@ -9,11 +9,11 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
+import net.coalcube.bansystem.core.util.Type;
+import net.coalcube.bansystem.core.util.URLUtils;
+import net.coalcube.bansystem.core.util.UUIDFetcher;
 import net.coalcube.bansystem.spigot.BanSystem;
 import net.coalcube.bansystem.spigot.util.Banmanager;
-import net.coalcube.bansystem.spigot.util.Type;
-import net.coalcube.bansystem.spigot.util.URLUtils;
-import net.coalcube.bansystem.spigot.util.UUIDFetcher;
 import net.coalcube.bansystem.spigot.util.UpdateChecker;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ClickEvent.Action;

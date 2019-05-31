@@ -10,6 +10,8 @@ import java.util.GregorianCalendar;
 import java.util.UUID;
 
 import net.coalcube.bansystem.bungee.BanSystem;
+import net.coalcube.bansystem.core.util.Type;
+import net.coalcube.bansystem.core.util.UUIDFetcher;
 import net.md_5.bungee.api.CommandSender;
 
 public class Banmanager {

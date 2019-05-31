@@ -11,7 +11,7 @@ import org.bukkit.command.TabExecutor;
 import net.coalcube.bansystem.spigot.BanSystem;
 import net.coalcube.bansystem.spigot.util.Banmanager;
 import net.coalcube.bansystem.spigot.util.TabCompleteUtil;
-import net.coalcube.bansystem.spigot.util.UUIDFetcher;
+import net.coalcube.bansystem.core.util.UUIDFetcher;
 
 public class CMDhistory implements CommandExecutor, TabExecutor {
 

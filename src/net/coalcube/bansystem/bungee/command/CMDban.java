@@ -5,8 +5,8 @@ import java.util.UUID;
 import net.coalcube.bansystem.bungee.BanSystem;
 import net.coalcube.bansystem.bungee.util.Banmanager;
 import net.coalcube.bansystem.bungee.util.TabCompleteUtil;
-import net.coalcube.bansystem.bungee.util.Type;
-import net.coalcube.bansystem.bungee.util.UUIDFetcher;
+import net.coalcube.bansystem.core.util.Type;
+import net.coalcube.bansystem.core.util.UUIDFetcher;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -124,7 +124,7 @@ public class CMDban extends Command implements TabExecutor {
 					banmanager.ban(reason, dauer, ersteller, type, target.getUniqueId(),
 							target.getAddress().getAddress());
 				}
-				if (type == net.coalcube.bansystem.bungee.util.Type.NETWORK) {
+				if (type == net.coalcube.bansystem.core.util.Type.NETWORK) {
 					target.disconnect(
 							BanSystem.Banscreen.replaceAll("%Reason%", banmanager.getReasonNetwork(id)).replaceAll(
 									"%ReamingTime%", banmanager.getRemainingTime(id, banmanager.getReasonNetwork(id))).replaceAll("&", "§"));

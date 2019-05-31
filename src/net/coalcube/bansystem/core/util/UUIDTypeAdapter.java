@@ -1,4 +1,4 @@
-package net.coalcube.bansystem.bungee.util;
+package net.coalcube.bansystem.core.util;
 
 import java.io.IOException;
 import java.util.UUID;

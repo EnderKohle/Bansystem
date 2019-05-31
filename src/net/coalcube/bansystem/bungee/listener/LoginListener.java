@@ -6,10 +6,10 @@ import java.util.concurrent.TimeUnit;
 
 import net.coalcube.bansystem.bungee.BanSystem;
 import net.coalcube.bansystem.bungee.util.Banmanager;
-import net.coalcube.bansystem.bungee.util.Type;
-import net.coalcube.bansystem.bungee.util.URLUtils;
-import net.coalcube.bansystem.bungee.util.UUIDFetcher;
 import net.coalcube.bansystem.bungee.util.UpdateChecker;
+import net.coalcube.bansystem.core.util.Type;
+import net.coalcube.bansystem.core.util.URLUtils;
+import net.coalcube.bansystem.core.util.UUIDFetcher;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;

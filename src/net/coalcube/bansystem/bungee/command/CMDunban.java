@@ -5,7 +5,7 @@ import java.util.UUID;
 import net.coalcube.bansystem.bungee.BanSystem;
 import net.coalcube.bansystem.bungee.util.Banmanager;
 import net.coalcube.bansystem.bungee.util.TabCompleteUtil;
-import net.coalcube.bansystem.bungee.util.UUIDFetcher;
+import net.coalcube.bansystem.core.util.UUIDFetcher;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;

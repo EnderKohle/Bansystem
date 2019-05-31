@@ -8,11 +8,11 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 
+import net.coalcube.bansystem.core.util.Type;
+import net.coalcube.bansystem.core.util.UUIDFetcher;
 import net.coalcube.bansystem.spigot.BanSystem;
 import net.coalcube.bansystem.spigot.util.Banmanager;
 import net.coalcube.bansystem.spigot.util.TabCompleteUtil;
-import net.coalcube.bansystem.spigot.util.Type;
-import net.coalcube.bansystem.spigot.util.UUIDFetcher;
 
 public class CMDcheck implements CommandExecutor, TabExecutor {
 

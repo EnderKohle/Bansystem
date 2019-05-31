@@ -1,4 +1,4 @@
-package net.coalcube.bansystem.spigot.util;
+package net.coalcube.bansystem.core.util;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;

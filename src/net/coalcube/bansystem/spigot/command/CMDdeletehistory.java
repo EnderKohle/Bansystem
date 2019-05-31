@@ -10,10 +10,10 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 
+import net.coalcube.bansystem.core.util.UUIDFetcher;
 import net.coalcube.bansystem.spigot.BanSystem;
 import net.coalcube.bansystem.spigot.util.Banmanager;
 import net.coalcube.bansystem.spigot.util.TabCompleteUtil;
-import net.coalcube.bansystem.spigot.util.UUIDFetcher;
 
 public class CMDdeletehistory implements CommandExecutor, TabExecutor {
 
