@@ -22,7 +22,8 @@ import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 
-public class LoginListener implements Listener {
+public class PlayerJoinListener implements Listener {
+	@SuppressWarnings("deprecation")
 	@EventHandler
 	public void onLogin(PlayerJoinEvent e) {
 		boolean isCancelled = false;
@@ -40,6 +41,11 @@ public class LoginListener implements Listener {
 					p.kickPlayer(component);
 					e.setJoinMessage("");
 					isCancelled = true;
+					if(BanSystem.config.getBoolean("FixPlayerloadOnJoin")) {
+						for(Player all : Bukkit.getOnlinePlayers()) {
+							all.hidePlayer(p);
+						}
+					}
 					if (bm.needIP(p.getUniqueId())) {
 						bm.setIP(p.getUniqueId(), p.getAddress().getAddress());
 					}
@@ -138,6 +144,11 @@ public class LoginListener implements Listener {
 											.replaceAll("%ReamingTime%", bm.getRemainingTime(p.getUniqueId(),
 													bm.getReasonNetwork(p.getUniqueId())));
 									p.kickPlayer(component);
+									if(BanSystem.config.getBoolean("FixPlayerloadOnJoin")) {
+										for(Player all : Bukkit.getOnlinePlayers()) {
+											all.hidePlayer(p);
+										}
+									}
 								} else {
 									Bukkit.getConsoleSender().sendMessage(BanSystem.PREFIX + "§e" + p.getName()
 											+ " §cist womöglich ein 2. Account von §e" + names);

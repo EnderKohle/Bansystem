@@ -22,8 +22,9 @@ import net.coalcube.bansystem.spigot.command.CMDhistory;
 import net.coalcube.bansystem.spigot.command.CMDkick;
 import net.coalcube.bansystem.spigot.command.CMDunban;
 import net.coalcube.bansystem.spigot.command.CMDunmute;
-import net.coalcube.bansystem.spigot.listener.ChatListener;
-import net.coalcube.bansystem.spigot.listener.LoginListener;
+import net.coalcube.bansystem.spigot.listener.AsyncPlayerChatListener;
+import net.coalcube.bansystem.spigot.listener.PlayerCommandPreprocessListener;
+import net.coalcube.bansystem.spigot.listener.PlayerJoinListener;
 import net.coalcube.bansystem.spigot.util.MySQL;
 import net.coalcube.bansystem.spigot.util.UpdateChecker;
 
@@ -124,8 +125,9 @@ public class BanSystem extends JavaPlugin {
 		this.getCommand("bansystem").setExecutor(new CMDbansystem());
 		this.getCommand("bansys").setExecutor(new CMDbansystem());
 		
-		pm.registerEvents(new LoginListener(), this);
-		pm.registerEvents(new ChatListener(), this);
+		pm.registerEvents(new PlayerJoinListener(), this);
+		pm.registerEvents(new PlayerCommandPreprocessListener(), this);
+		pm.registerEvents(new AsyncPlayerChatListener(), this);
 	}
 	
 	private void createConfig() {
@@ -152,6 +154,10 @@ public class BanSystem extends JavaPlugin {
 				config.set("VPN.autoban.enable", true);
 				config.set("VPN.autoban.ID", 11); 
 				config.set("VPN.serverIP", "00.00.00.00");
+				
+				config.set("mute.blockedCommands", Arrays.asList(new String[] {"/msg","/tell"}));
+				
+				config.set("FixPlayerloadOnJoin", "false");
 				
 				config.set("IDs.1.reason", "Unerlaubte Clientmodification/Hackclient");
 				config.set("IDs.1.onlyAdmins", false);

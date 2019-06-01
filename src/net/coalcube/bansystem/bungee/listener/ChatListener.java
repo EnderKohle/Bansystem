@@ -17,7 +17,14 @@ public class ChatListener implements Listener {
 		if(BanSystem.mysql.isConnected()) {
 			ProxiedPlayer p = (ProxiedPlayer) e.getSender();
 			String msg = e.getMessage();
-			if(msg.startsWith("/msg") || !msg.startsWith("/")) {
+			boolean startsWithBlockedCommnad = false;
+			
+			for(Object s : BanSystem.config.getList("mute.blockedCommands")) {
+				if(msg.startsWith(s.toString())) {
+					startsWithBlockedCommnad = true;
+				}
+			}
+			if(startsWithBlockedCommnad || !msg.startsWith("/")) {
 				if(bm.isbanned(p.getUniqueId()) && bm.getType(p.getUniqueId(), bm.getReasonChat(p.getUniqueId())) == Type.CHAT) {
 					if(bm.getEnd(p.getUniqueId(), bm.getReasonChat(p.getUniqueId())) > System.currentTimeMillis() || bm.getEnd(p.getUniqueId(), bm.getReasonChat(p.getUniqueId())) == -1) {
 						e.setCancelled(true);

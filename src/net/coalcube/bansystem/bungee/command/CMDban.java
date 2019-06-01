@@ -126,8 +126,10 @@ public class CMDban extends Command implements TabExecutor {
 				}
 				if (type == net.coalcube.bansystem.core.util.Type.NETWORK) {
 					target.disconnect(
-							BanSystem.Banscreen.replaceAll("%Reason%", banmanager.getReasonNetwork(id)).replaceAll(
-									"%ReamingTime%", banmanager.getRemainingTime(id, banmanager.getReasonNetwork(id))).replaceAll("&", "§"));
+							BanSystem.Banscreen
+							.replaceAll("%Reason%", banmanager.getReasonNetwork(id))
+							.replaceAll("%ReamingTime%", banmanager.getRemainingTime(id, banmanager.getReasonNetwork(id)))
+							.replaceAll("&", "§"));
 				} else {
 					for (String message : BanSystem.messages.getStringList("Ban.Chat.Screen")) {
 						target.sendMessage(message.replaceAll("%P%", BanSystem.PREFIX).replaceAll("%reason%", reason)

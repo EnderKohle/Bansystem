@@ -4,9 +4,9 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.GregorianCalendar;
+import java.util.Date;
 import java.util.UUID;
 
 import net.coalcube.bansystem.bungee.BanSystem;
@@ -31,6 +31,9 @@ public class Banmanager {
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
 		}
+		Date date = new Date();
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
+		String zeitstempel = simpleDateFormat.format(date);
 		BanSystem.mysql.update("INSERT INTO ban (UUID, Ende, Grund, Ersteller, IP, Type) VALUES ('" + uuid + "','" + end
 				+ "','" + grund + "','" + ersteller + "','" + ip + "','" + type + "')");
 		if (ip != null) {
@@ -38,18 +41,14 @@ public class Banmanager {
 					.update("INSERT INTO `banhistory` (UUID, Ende, Grund, Ersteller, Erstelldatum, IP, Type, duration) "
 							+ "VALUES ('" + uuid + "'," + "'" + end + "'," + "'" + grund + "'," + "'" + ersteller + "',"
 							+ "'"
-							+ DateFormat.getDateInstance(DateFormat.MEDIUM).format(new GregorianCalendar().getTime())
-							+ " "
-							+ DateFormat.getTimeInstance(DateFormat.SHORT).format(new GregorianCalendar().getTime())
+							+ zeitstempel
 							+ "'," + "'" + ip.getHostAddress() + "'," + "'" + type + "', '" + seconds + "');");
 		} else
 			BanSystem.mysql
 					.update("INSERT INTO `banhistory` (UUID, Ende, Grund, Ersteller, Erstelldatum, Type, duration) "
 							+ "VALUES ('" + uuid + "'," + "'" + end + "'," + "'" + grund + "'," + "'" + ersteller + "',"
 							+ "'"
-							+ DateFormat.getDateInstance(DateFormat.MEDIUM).format(new GregorianCalendar().getTime())
-							+ " "
-							+ DateFormat.getTimeInstance(DateFormat.SHORT).format(new GregorianCalendar().getTime())
+							+ zeitstempel
 							+ "'," + "'" + type + "', '" + seconds + "');");
 	}
 
@@ -155,7 +154,7 @@ public class Banmanager {
 	@SuppressWarnings("deprecation")
 	public void sendHistorys(UUID id, CommandSender sender) {
 		ResultSet rs = BanSystem.mysql.getResult(
-				"SELECT Grund,Erstelldatum,Ersteller,IP,Type,duration FROM `banhistory` WHERE UUID='" + id + "'");
+				"SELECT * FROM `banhistory` WHERE UUID='" + id + "'");
 		sender.sendMessage(BanSystem.PREFIX + "§8§m-------§8» §e" + UUIDFetcher.getName(id) + " §8«§m-------");
 
 		if (hashistory2(id)) {
@@ -164,6 +163,7 @@ public class Banmanager {
 					sender.sendMessage(BanSystem.PREFIX);
 					sender.sendMessage(BanSystem.PREFIX + "§7Grund §8» §c" + rs.getString("Grund"));
 					sender.sendMessage(BanSystem.PREFIX + "§7Erstelldatum §8» §c" + rs.getString("Erstelldatum"));
+					sender.sendMessage(BanSystem.PREFIX + "§7Enddatum §8» §c"+new SimpleDateFormat("dd.MM.yyyy HH:mm:ss").format(new Date(rs.getLong("Ende"))));
 					sender.sendMessage(BanSystem.PREFIX + "§7Ersteller §8» §c" + rs.getString("Ersteller"));
 					sender.sendMessage(BanSystem.PREFIX + "§7IP §8» §c" + rs.getString("IP"));
 					sender.sendMessage(BanSystem.PREFIX + "§7Type §8» §c" + rs.getString("Type"));

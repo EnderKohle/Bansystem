@@ -163,6 +163,8 @@ public class BanSystem extends Plugin {
 				config.set("VPN.autoban.ID", 11); 
 				config.set("VPN.serverIP", "00.00.00.00");
 				
+				config.set("mute.blockedCommands", Arrays.asList(new String[] {"/msg","/tell"}));
+				
 				config.set("IDs.1.reason", "Unerlaubte Clientmodification/Hackclient");
 				config.set("IDs.1.onlyAdmins", false);
 				config.set("IDs.1.type", Type.NETWORK.toString());

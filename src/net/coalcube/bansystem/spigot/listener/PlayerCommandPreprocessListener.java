@@ -4,22 +4,30 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 
 import net.coalcube.bansystem.core.util.Type;
 import net.coalcube.bansystem.spigot.BanSystem;
 import net.coalcube.bansystem.spigot.util.Banmanager;
 
-public class ChatListener implements Listener {
+public class PlayerCommandPreprocessListener implements Listener {
 	
 	private Banmanager bm = new Banmanager();
 	
 	@EventHandler
-	public void onChat(AsyncPlayerChatEvent e) {
+	public void onChat(PlayerCommandPreprocessEvent e) {
 		if(BanSystem.mysql.isConnected()) {
 			Player p = e.getPlayer();
 			String msg = e.getMessage();
-			if(msg.startsWith("/msg") || !msg.startsWith("/")) {
+			boolean startsWithBlockedCommnad = false;
+			
+			for(Object s : BanSystem.config.getList("mute.blockedCommands")) {
+				if(msg.startsWith(s.toString())) {
+					startsWithBlockedCommnad = true;
+				}
+			}
+			
+			if(startsWithBlockedCommnad || !msg.startsWith("/")) {
 				if(bm.isbanned(p.getUniqueId()) && bm.getType(p.getUniqueId(), bm.getReasonChat(p.getUniqueId())) == Type.CHAT) {
 					if(bm.getEnd(p.getUniqueId(), bm.getReasonChat(p.getUniqueId())) > System.currentTimeMillis() || bm.getEnd(p.getUniqueId(), bm.getReasonChat(p.getUniqueId())) == -1) {
 						e.setCancelled(true);
