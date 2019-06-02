@@ -7,6 +7,9 @@ import java.util.Arrays;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -106,6 +109,10 @@ public class BanSystem extends JavaPlugin {
 	public void onDisable() {
 		if(mysql.isConnected())
 			mysql.disconnect();
+		
+		AsyncPlayerChatEvent.getHandlerList().unregister(plugin);
+		PlayerCommandPreprocessEvent.getHandlerList().unregister(plugin);
+		PlayerJoinEvent.getHandlerList().unregister(plugin);
 		
 		Bukkit.getConsoleSender().sendMessage(BanSystem.PREFIX+"§7Das BanSystem wurde gestoppt.");
 		
