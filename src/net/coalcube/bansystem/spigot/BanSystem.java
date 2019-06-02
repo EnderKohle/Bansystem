@@ -10,6 +10,8 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerPreLoginEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -31,6 +33,7 @@ import net.coalcube.bansystem.spigot.listener.PlayerJoinListener;
 import net.coalcube.bansystem.spigot.util.MySQL;
 import net.coalcube.bansystem.spigot.util.UpdateChecker;
 
+@SuppressWarnings("deprecation")
 public class BanSystem extends JavaPlugin {
 
 	public static Plugin plugin;
@@ -104,7 +107,6 @@ public class BanSystem extends JavaPlugin {
 		
 		super.onEnable();
 	}
-	
 	@Override
 	public void onDisable() {
 		if(mysql.isConnected())
@@ -112,7 +114,11 @@ public class BanSystem extends JavaPlugin {
 		
 		AsyncPlayerChatEvent.getHandlerList().unregister(plugin);
 		PlayerCommandPreprocessEvent.getHandlerList().unregister(plugin);
+		PlayerQuitEvent.getHandlerList().unregister(plugin);
 		PlayerJoinEvent.getHandlerList().unregister(plugin);
+		PlayerPreLoginEvent.getHandlerList().unregister(plugin);
+		
+		Banscreen = "";
 		
 		Bukkit.getConsoleSender().sendMessage(BanSystem.PREFIX+"§7Das BanSystem wurde gestoppt.");
 		
@@ -164,7 +170,8 @@ public class BanSystem extends JavaPlugin {
 				
 				config.set("mute.blockedCommands", Arrays.asList(new String[] {"/msg","/tell"}));
 				
-				config.set("FixPlayerloadOnJoin", "false");
+				config.set("Ban.KickDelay.enable", false);
+				config.set("Ban.KickDelay.inSecconds", 1);
 				
 				config.set("IDs.1.reason", "Unerlaubte Clientmodification/Hackclient");
 				config.set("IDs.1.onlyAdmins", false);

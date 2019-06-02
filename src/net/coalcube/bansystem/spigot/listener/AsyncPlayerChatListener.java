@@ -3,10 +3,11 @@ package net.coalcube.bansystem.spigot.listener;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
-import net.coalcube.bansystem.core.util.Type;
+// import net.coalcube.bansystem.core.util.Type;
 import net.coalcube.bansystem.spigot.BanSystem;
 import net.coalcube.bansystem.spigot.util.Banmanager;
 
@@ -14,12 +15,12 @@ public class AsyncPlayerChatListener implements Listener {
 
 	private Banmanager bm = new Banmanager();
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.LOWEST)
 	public void onChat(AsyncPlayerChatEvent e) {
 		if (BanSystem.mysql.isConnected()) {
 			Player p = e.getPlayer();
 			if (bm.isbanned(p.getUniqueId())
-					&& bm.getType(p.getUniqueId(), bm.getReasonChat(p.getUniqueId())) == Type.CHAT) {
+					/*&& bm.getType(p.getUniqueId(), bm.getReasonChat(p.getUniqueId())) == Type.CHAT */) {
 				if (bm.getEnd(p.getUniqueId(), bm.getReasonChat(p.getUniqueId())) > System.currentTimeMillis()
 						|| bm.getEnd(p.getUniqueId(), bm.getReasonChat(p.getUniqueId())) == -1) {
 					e.setCancelled(true);

@@ -71,9 +71,8 @@ public class CMDban implements CommandExecutor, TabExecutor {
 							}
 						}
 					}
-
 					if (id != null && type != null) {
-						if(sender.hasPermission("bansys.ban."+id) || sender.hasPermission("bansys.ban.all") || sender.hasPermission("bansys.ban.admin")) {
+						if(sender.hasPermission("bansys.ban."+args[1]) || sender.hasPermission("bansys.ban.all") || sender.hasPermission("bansys.ban.admin")) {
 							ban(sender, id, type, dauer, reason);
 						} else sender.sendMessage(BanSystem.messages.getString("Ban.ID.NoPermission").replaceAll("%P%", BanSystem.PREFIX));
 					}
