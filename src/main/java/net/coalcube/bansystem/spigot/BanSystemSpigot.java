@@ -334,7 +334,7 @@ public class BanSystemSpigot extends JavaPlugin implements BanSystem {
 				
 				messages = YamlConfiguration.loadConfiguration(messagesfile);
 				
-				messages.set("prefix", "&8&l┃ &cBanSystem &8» &7");
+				messages.set("prefix", "§8§l┃ &cBanSystem §8» §7");
 				messages.set("NoPermissionMessage", "%P%§cDafür hast du keine Rechte!");
 				messages.set("NoPlayerMessage", "%P%§cDu bist kein Spieler!");
 				messages.set("Playerdoesnotexist", "%P%§cDieser Spieler existiert nicht!");
