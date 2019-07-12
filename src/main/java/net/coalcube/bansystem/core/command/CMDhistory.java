@@ -28,18 +28,18 @@ public class CMDhistory implements Command {
 					UUID id = UUIDFetcher.getUUID(args[0]);
 					if (id == null) {
 						sender.sendMessage(messages.getString("Playerdoesnotexist")
-								.replaceAll("%P%", messages.getString("Prefix")).replaceAll("&", "§"));
+								.replaceAll("%P%", messages.getString("prefix")).replaceAll("&", "§"));
 						return;
 					}
 					if (bm.hashistory(id)) {
 						bm.sendHistorys(id, sender);
 					} else {
 						sender.sendMessage(messages.getString("History.historynotfound")
-								.replaceAll("%P%", messages.getString("Prefix")).replaceAll("&", "§"));
+								.replaceAll("%P%", messages.getString("prefix")).replaceAll("&", "§"));
 					}
 				} else {
 					sender.sendMessage(messages.getString("History.usage")
-							.replaceAll("%P%", messages.getString("Prefix")).replaceAll("&", "§"));
+							.replaceAll("%P%", messages.getString("prefix")).replaceAll("&", "§"));
 				}
 			} else {
 				sender.sendMessage(messages.getString("NoDBConnection"));

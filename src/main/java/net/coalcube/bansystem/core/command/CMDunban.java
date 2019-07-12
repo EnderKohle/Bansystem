@@ -32,7 +32,7 @@ public class CMDunban implements Command {
 					UUID id = UUIDFetcher.getUUID(args[0]);
 					if (id == null) {
 						sender.sendMessage(messages.getString("Playerdoesnotexist")
-								.replaceAll("%P%", messages.getString("Prefix")).replaceAll("&", "§"));
+								.replaceAll("%P%", messages.getString("prefix")).replaceAll("&", "§"));
 						return;
 					}
 					if (bm.isBannedNetwork(id)) {
@@ -44,19 +44,19 @@ public class CMDunban implements Command {
 							}
 
 							sender.sendMessage(messages.getString("Unban.needreason.success")
-									.replaceAll("%P%", messages.getString("Prefix"))
+									.replaceAll("%P%", messages.getString("prefix"))
 									.replaceAll("%player%", UUIDFetcher.getName(id)).replaceAll("%reason%", reason));
 							for (User all : BanSystem.getInstance().getAllPlayers()) {
 								if (all.hasPermission("bansys.notify") && all != sender) {
 									all.sendMessage(messages.getString("Unban.needreason.notify")
-											.replaceAll("%P%", messages.getString("Prefix"))
+											.replaceAll("%P%", messages.getString("prefix"))
 											.replaceAll("%player%", UUIDFetcher.getName(id))
 											.replaceAll("%sender%", sender.getName()).replaceAll("%reason%", reason));
 								}
 							}
 							BanSystem.getInstance().getConsole()
 									.sendMessage(messages.getString("Unban.needreason.notify")
-											.replaceAll("%P%", messages.getString("Prefix"))
+											.replaceAll("%P%", messages.getString("prefix"))
 											.replaceAll("%player%", UUIDFetcher.getName(id))
 											.replaceAll("%sender%", sender.getName()).replaceAll("%reason%", reason));
 
@@ -68,19 +68,19 @@ public class CMDunban implements Command {
 						} else {
 
 							sender.sendMessage(
-									messages.getString("Unban.success").replaceAll("%P%", messages.getString("Prefix"))
+									messages.getString("Unban.success").replaceAll("%P%", messages.getString("prefix"))
 											.replaceAll("%player%", UUIDFetcher.getName(id)));
 							for (User all : BanSystem.getInstance().getAllPlayers()) {
 								if (all.hasPermission("bansys.notify") && all != sender) {
 									all.sendMessage(messages.getString("Unban.notify")
-											.replaceAll("%P%", messages.getString("Prefix"))
+											.replaceAll("%P%", messages.getString("prefix"))
 											.replaceAll("%player%", UUIDFetcher.getName(id))
 											.replaceAll("%sender%", sender.getName()).replaceAll("&", "§"));
 								}
 							}
 							BanSystem.getInstance().getConsole()
 									.sendMessage(messages.getString("Unban.notify")
-											.replaceAll("%P%", messages.getString("Prefix"))
+											.replaceAll("%P%", messages.getString("prefix"))
 											.replaceAll("%player%", UUIDFetcher.getName(id))
 											.replaceAll("%sender%", sender.getName()));
 
@@ -89,11 +89,11 @@ public class CMDunban implements Command {
 						}
 					} else {
 						sender.sendMessage(
-								messages.getString("Unban.notbanned").replaceAll("%P%", messages.getString("Prefix"))
+								messages.getString("Unban.notbanned").replaceAll("%P%", messages.getString("prefix"))
 										.replaceAll("%player%", UUIDFetcher.getName(id)).replaceAll("&", "§"));
 					}
 				} else {
-					sender.sendMessage(messages.getString("Unban.usage").replaceAll("%P%", messages.getString("Prefix"))
+					sender.sendMessage(messages.getString("Unban.usage").replaceAll("%P%", messages.getString("prefix"))
 							.replaceAll("&", "§"));
 				}
 			} else {

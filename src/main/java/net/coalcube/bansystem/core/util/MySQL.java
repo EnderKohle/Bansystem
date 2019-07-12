@@ -37,12 +37,12 @@ public class MySQL {
 		try {
 			con = DriverManager.getConnection(
 					"jdbc:mysql://" + host + ":" + port + "/" + database + "?autoReconnect=true", user, password);
-			BanSystem.getInstance().getConsole().sendMessage(messages.getString("Prefix")
+			BanSystem.getInstance().getConsole().sendMessage(messages.getString("prefix")
 					+ "§7Die Verbindung zur MySQL Datenbank wurde §eerfolgreich §7hergestellt.");
 		} catch (SQLException ex) {
-			BanSystem.getInstance().getConsole().sendMessage(messages.getString("Prefix")
+			BanSystem.getInstance().getConsole().sendMessage(messages.getString("prefix")
 					+ "§cDie Verbindung zur MySQL Datenbank konnte nicht hergestellt werden.");
-			BanSystem.getInstance().getConsole().sendMessage(messages.getString("Prefix")
+			BanSystem.getInstance().getConsole().sendMessage(messages.getString("prefix")
 					+ "§cBitte überprüfe die Anmeldedaten für die datenbank in der §econifg.yml§c.");
 		}
 

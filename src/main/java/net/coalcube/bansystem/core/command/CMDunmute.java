@@ -29,7 +29,7 @@ public class CMDunmute implements Command {
 					UUID id = UUIDFetcher.getUUID(args[0]);
 					if (id == null) {
 						sender.sendMessage(messages.getString("Playerdoesnotexist").replaceAll("%P%",
-								messages.getString("Prefix")));
+								messages.getString("prefix")));
 						return;
 					}
 					if (bm.isBannedChat(id)) {
@@ -41,19 +41,19 @@ public class CMDunmute implements Command {
 							}
 
 							sender.sendMessage(messages.getString("Unmute.needreason.success")
-									.replaceAll("%P%", messages.getString("Prefix"))
+									.replaceAll("%P%", messages.getString("prefix"))
 									.replaceAll("%player%", UUIDFetcher.getName(id)).replaceAll("%reason%", reason));
 							for (User all : BanSystem.getInstance().getAllPlayers()) {
 								if (all.hasPermission("bansys.notify") && all != sender) {
 									all.sendMessage(messages.getString("Unmute.needreason.notify")
-											.replaceAll("%P%", messages.getString("Prefix"))
+											.replaceAll("%P%", messages.getString("prefix"))
 											.replaceAll("%player%", UUIDFetcher.getName(id))
 											.replaceAll("%sender%", sender.getName()).replaceAll("%reason%", reason));
 								}
 							}
 							BanSystem.getInstance().getConsole()
 									.sendMessage(messages.getString("Unmute.needreason.notify")
-											.replaceAll("%P%", messages.getString("Prefix"))
+											.replaceAll("%P%", messages.getString("prefix"))
 											.replaceAll("%player%", UUIDFetcher.getName(id))
 											.replaceAll("%sender%", sender.getName()).replaceAll("%reason%", reason));
 
@@ -65,19 +65,19 @@ public class CMDunmute implements Command {
 						} else {
 
 							sender.sendMessage(
-									messages.getString("Unmute.success").replaceAll("%P%", messages.getString("Prefix"))
+									messages.getString("Unmute.success").replaceAll("%P%", messages.getString("prefix"))
 											.replaceAll("%player%", UUIDFetcher.getName(id)));
 							for (User all : BanSystem.getInstance().getAllPlayers()) {
 								if (all.hasPermission("bansys.notify") && all != sender) {
 									all.sendMessage(messages.getString("Unmute.notify")
-											.replaceAll("%P%", messages.getString("Prefix"))
+											.replaceAll("%P%", messages.getString("prefix"))
 											.replaceAll("%player%", UUIDFetcher.getName(id))
 											.replaceAll("%sender%", sender.getName()).replaceAll("&", "§"));
 								}
 							}
 							BanSystem.getInstance().getConsole()
 									.sendMessage(messages.getString("Unmute.notify")
-											.replaceAll("%P%", messages.getString("Prefix"))
+											.replaceAll("%P%", messages.getString("prefix"))
 											.replaceAll("%player%", UUIDFetcher.getName(id))
 											.replaceAll("%sender%", sender.getName()));
 
@@ -86,12 +86,12 @@ public class CMDunmute implements Command {
 						}
 					} else {
 						sender.sendMessage(
-								messages.getString("Unmute.notmuted").replaceAll("%P%", messages.getString("Prefix"))
+								messages.getString("Unmute.notmuted").replaceAll("%P%", messages.getString("prefix"))
 										.replaceAll("%player%", UUIDFetcher.getName(id)).replaceAll("&", "§"));
 					}
 				} else {
 					sender.sendMessage(messages.getString("Unmute.usage")
-							.replaceAll("%P%", messages.getString("Prefix")).replaceAll("&", "§"));
+							.replaceAll("%P%", messages.getString("prefix")).replaceAll("&", "§"));
 				}
 			} else {
 				sender.sendMessage(messages.getString("NoDBConnection"));

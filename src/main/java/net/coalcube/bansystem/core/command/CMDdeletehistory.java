@@ -29,34 +29,34 @@ public class CMDdeletehistory implements Command {
 					UUID id = UUIDFetcher.getUUID(args[0]);
 					if (id == null) {
 						sender.sendMessage(messages.getString("Playerdoesnotexist")
-								.replaceAll("%P%", messages.getString("Prefix")).replaceAll("&", "§"));
+								.replaceAll("%P%", messages.getString("prefix")).replaceAll("&", "§"));
 						return;
 					}
 					if (bm.hashistory(id)) {
 						bm.clearHistory(id);
 						sender.sendMessage(messages.getString("Deletehistory.success")
-								.replaceAll("%P%", messages.getString("Prefix"))
+								.replaceAll("%P%", messages.getString("prefix"))
 								.replaceAll("%player%", UUIDFetcher.getName(id)).replaceAll("&", "§"));
 						for (User all : BanSystem.getInstance().getAllPlayers()) {
 							if (all.hasPermission("bansys.notify") && all != sender) {
 								all.sendMessage(messages.getString("Deletehistory.notify")
-										.replaceAll("%P%", messages.getString("Prefix"))
+										.replaceAll("%P%", messages.getString("prefix"))
 										.replaceAll("%player%", UUIDFetcher.getName(id))
 										.replaceAll("%sender%", sender.getName()).replaceAll("&", "§"));
 							}
 						}
 						BanSystem.getInstance().getConsole()
 								.sendMessage(messages.getString("Deletehistory.notify")
-										.replaceAll("%P%", messages.getString("Prefix"))
+										.replaceAll("%P%", messages.getString("prefix"))
 										.replaceAll("%player%", UUIDFetcher.getName(id))
 										.replaceAll("%sender%", sender.getName()).replaceAll("&", "§"));
 					} else {
 						sender.sendMessage(messages.getString("History.historynotfound")
-								.replaceAll("%P%", messages.getString("Prefix")).replaceAll("&", "§"));
+								.replaceAll("%P%", messages.getString("prefix")).replaceAll("&", "§"));
 					}
 				} else {
 					sender.sendMessage(messages.getString("Deletehistory.usage")
-							.replaceAll("%P%", messages.getString("Prefix")).replaceAll("&", "§"));
+							.replaceAll("%P%", messages.getString("prefix")).replaceAll("&", "§"));
 				}
 			} else {
 				sender.sendMessage(messages.getString("NoDBConnection"));

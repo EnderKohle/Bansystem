@@ -19,19 +19,19 @@ public class CMDbansystem implements Command {
 			if (args.length == 0) {
 				sender.sendMessage(
 						ChatColor.translateAlternateColorCodes('&', messages.getString("bansystem.usage"))
-								.replaceFirst("%P%", messages.getString("Prefix")));
+								.replaceFirst("%P%", messages.getString("prefix")));
 			} else if (args.length == 1) {
 				if (args[0].equalsIgnoreCase("help")) {
 
 					for (String s : messages.getStringList("banystem.help")) {
 						sender.sendMessage(
-								ChatColor.translateAlternateColorCodes('&', s).replaceAll("%P%", messages.getString("Prefix")));
+								ChatColor.translateAlternateColorCodes('&', s).replaceAll("%P%", messages.getString("prefix")));
 					}
 
 				} else if (args[0].equalsIgnoreCase("reload") || args[0].equalsIgnoreCase("rl")) {
 					sender.sendMessage(ChatColor
 							.translateAlternateColorCodes('&', messages.getString("bansystem.reload.process"))
-							.replaceAll("%P%", messages.getString("Prefix")));
+							.replaceAll("%P%", messages.getString("prefix")));
 
 					BanSystem.getInstance().onDisable();
 					BanSystem.getInstance().onEnable();
@@ -39,21 +39,21 @@ public class CMDbansystem implements Command {
 					sender.sendMessage(ChatColor
 							.translateAlternateColorCodes('&',
 									messages.getString("bansystem.reload.finished"))
-							.replaceAll("%P%", messages.getString("Prefix")));
+							.replaceAll("%P%", messages.getString("prefix")));
 
 				} else if (args[0].equalsIgnoreCase("version") || args[0].equalsIgnoreCase("ver")) {
 					sender.sendMessage(ChatColor
 							.translateAlternateColorCodes('&', messages.getString("bansystem.version"))
-							.replaceAll("%P%", messages.getString("Prefix"))
+							.replaceAll("%P%", messages.getString("prefix"))
 							.replaceAll("%ver%", BanSystem.getInstance().getVersion()));
 				}
 			} else {
 				sender.sendMessage(
 						ChatColor.translateAlternateColorCodes('&', messages.getString("bansystem.usage"))
-								.replaceFirst("%P%", messages.getString("Prefix")));
+								.replaceFirst("%P%", messages.getString("prefix")));
 			}
 		} else {
-			sender.sendMessage(messages.getString("Prefix") + "§7BanSystem by §eTobi§7.");
+			sender.sendMessage(messages.getString("prefix") + "§7BanSystem by §eTobi§7.");
 		}
 	}
 
