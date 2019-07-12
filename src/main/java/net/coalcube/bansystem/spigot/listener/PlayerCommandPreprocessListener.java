@@ -22,7 +22,7 @@ public class PlayerCommandPreprocessListener implements Listener {
 			String msg = e.getMessage();
 			boolean startsWithBlockedCommnad = false;
 			
-			for(Object s : BanSystemSpigot.config.getList("mute.blockedCommands")) {
+			for(Object s : BanSystemSpigot.config.getStringList("mute.blockedCommands")) {
 				if(msg.startsWith(s.toString())) {
 					startsWithBlockedCommnad = true;
 				}

@@ -1,10 +1,14 @@
 package net.coalcube.bansystem.bungee.util;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import net.coalcube.bansystem.core.util.Config;
 import net.md_5.bungee.config.Configuration;
+import net.md_5.bungee.config.ConfigurationProvider;
+import net.md_5.bungee.config.YamlConfiguration;
 
 public class BungeeConfig implements Config {
 
@@ -44,6 +48,21 @@ public class BungeeConfig implements Config {
 	@Override
 	public List<String> getStringList(String key) {
 		return config.getStringList(key);
+	}
+	
+	@Override
+	public void set(String key, Object o) {
+		config.set(key, o);
+	}
+	
+	@Override
+	public void save(File f) throws IOException {
+			ConfigurationProvider.getProvider(YamlConfiguration.class).save(config, f);
+	}
+
+	@Override
+	public int getInt(String key) {
+		return config.getInt(key);
 	}
 
 }

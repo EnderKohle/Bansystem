@@ -1,5 +1,7 @@
 package net.coalcube.bansystem.core.util;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 public interface Config {
@@ -15,5 +17,11 @@ public interface Config {
 	public long getLong(String key);
 	
 	public List<String> getStringList(String key);
+	
+	public void set(String key, Object o);
+	
+	public void save(File f) throws IOException;
+	
+	public int getInt(String key);
 	
 }

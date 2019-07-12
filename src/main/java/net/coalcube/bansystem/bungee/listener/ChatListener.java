@@ -21,7 +21,7 @@ public class ChatListener implements Listener {
 			String msg = e.getMessage();
 			boolean startsWithBlockedCommnad = false;
 			
-			for(Object s : BanSystemBungee.config.getList("mute.blockedCommands")) {
+			for(Object s : BanSystemBungee.config.getStringList("mute.blockedCommands")) {
 				if(msg.startsWith(s.toString())) {
 					startsWithBlockedCommnad = true;
 				}

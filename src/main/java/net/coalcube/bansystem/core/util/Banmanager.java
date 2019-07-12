@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.UUID;
 
-import net.coalcube.bansystem.spigot.BanSystemSpigot;
+import net.coalcube.bansystem.core.BanSystem;
 
 public class Banmanager {
 	
@@ -32,18 +32,18 @@ public class Banmanager {
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
 		}
-		BanSystemSpigot.mysql.update("INSERT INTO ban (UUID, Ende, Grund, Ersteller, IP, Type, ID) VALUES ('" + uuid + "','" + end
+		BanSystem.getInstance().getMySQL().update("INSERT INTO ban (UUID, Ende, Grund, Ersteller, IP, Type, ID) VALUES ('" + uuid + "','" + end
 				+ "','" + grund + "','" + ersteller + "','" + ip + "','" + type + "', '" + id + "');");
 		if (ip != null) {
 			
-			BanSystemSpigot.mysql
+			BanSystem.getInstance().getMySQL()
 					.update("INSERT INTO `banhistory` (UUID, Ende, Grund, Ersteller, Erstelldatum, IP, Type, duration, ID) "
 							+ "VALUES ('" + uuid + "'," + "'" + end + "'," + "'" + grund + "'," + "'" + ersteller + "',"
 							+ "'"
 							+ zeitstempel
 							+ "'," + "'" + ip.getHostAddress() + "'," + "'" + type + "', '" + seconds + "', '" + id + "');");
 		} else
-			BanSystemSpigot.mysql
+			BanSystem.getInstance().getMySQL()
 					.update("INSERT INTO `banhistory` (UUID, Ende, Grund, Ersteller, Erstelldatum, Type, duration, ID) "
 							+ "VALUES ('" + uuid + "'," + "'" + end + "'," + "'" + grund + "'," + "'" + ersteller + "',"
 							+ "'"
@@ -56,18 +56,18 @@ public class Banmanager {
 		byte lvl;
 		Type type = null;
 		long dauer = 0;
-		for (String key : BanSystemSpigot.config.getConfigurationSection("IDs").getKeys(false)) {
+		for (String key : BanSystem.getInstance().getConfiguration().getSection("IDs").getKeys()) {
 			if (id == Integer.parseInt(key)) {
-				reason = BanSystemSpigot.config.getString("IDs." + key + ".reason");
-				type = Type.valueOf(BanSystemSpigot.config.getString("IDs." + key + ".type"));
+				reason = BanSystem.getInstance().getConfiguration().getString("IDs." + key + ".reason");
+				type = Type.valueOf(BanSystem.getInstance().getConfiguration().getString("IDs." + key + ".type"));
 				if (hashistory(uuid, reason)) {
 					lvl = (byte) (getLevel(uuid, reason) + 1);
 				} else {
 					lvl = 1;
 				}
-				for (String lvlkey : BanSystemSpigot.config.getConfigurationSection("IDs." + key + ".lvl").getKeys(false)) {
+				for (String lvlkey : BanSystem.getInstance().getConfiguration().getSection("IDs." + key + ".lvl").getKeys()) {
 					if ((byte) Byte.valueOf(lvlkey) == lvl) {
-						dauer = BanSystemSpigot.config.getLong("IDs." + key + ".lvl." + lvlkey + ".duration");
+						dauer = BanSystem.getInstance().getConfiguration().getLong("IDs." + key + ".lvl." + lvlkey + ".duration");
 					}
 				}
 				lvl = (byte) (lvl + 1);
@@ -80,35 +80,35 @@ public class Banmanager {
 	}
 	
 	public void unban(UUID id) {
-		BanSystemSpigot.mysql.update("DELETE FROM ban WHERE UUID='" + id + "' AND Type='" + Type.NETWORK + "'");
+		BanSystem.getInstance().getMySQL().update("DELETE FROM ban WHERE UUID='" + id + "' AND Type='" + Type.NETWORK + "'");
 	}
 	
 	public void unban(UUID id, String banid, UUID unbanner, String reason) {
-		BanSystemSpigot.mysql.update("DELETE FROM ban WHERE UUID='" + id + "' AND Type='" + Type.NETWORK + "'");
-		BanSystemSpigot.mysql.update("INSERT INTO `unban` (ID, unbanner, Grund) VALUES ('" + banid + "', '" + unbanner + "', '" + reason + "');");
+		BanSystem.getInstance().getMySQL().update("DELETE FROM ban WHERE UUID='" + id + "' AND Type='" + Type.NETWORK + "'");
+		BanSystem.getInstance().getMySQL().update("INSERT INTO `unban` (ID, unbanner, Grund) VALUES ('" + banid + "', '" + unbanner + "', '" + reason + "');");
 	}
 	
 	public void unban(UUID id, String banid, String unbanner, String reason) {
-		BanSystemSpigot.mysql.update("DELETE FROM ban WHERE UUID='" + id + "' AND Type='" + Type.NETWORK + "'");
-		BanSystemSpigot.mysql.update("INSERT INTO `unban` (ID, unbanner, Grund) VALUES ('" + banid + "', '" + unbanner + "', '" + reason + "');");
+		BanSystem.getInstance().getMySQL().update("DELETE FROM ban WHERE UUID='" + id + "' AND Type='" + Type.NETWORK + "'");
+		BanSystem.getInstance().getMySQL().update("INSERT INTO `unban` (ID, unbanner, Grund) VALUES ('" + banid + "', '" + unbanner + "', '" + reason + "');");
 	}
 	
 	public void unmute(UUID id) {
-		BanSystemSpigot.mysql.update("DELETE FROM ban WHERE UUID='" + id + "' AND Type='" + Type.CHAT + "'");
+		BanSystem.getInstance().getMySQL().update("DELETE FROM ban WHERE UUID='" + id + "' AND Type='" + Type.CHAT + "'");
 	}
 	
 	public void unmute(UUID id, String banid, UUID unbanner, String reason) {
-		BanSystemSpigot.mysql.update("DELETE FROM ban WHERE UUID='" + id + "' AND Type='" + Type.CHAT + "'");
-		BanSystemSpigot.mysql.update("INSERT INTO `unmute` (ID, unbanner, Grund) VALUES ('" + banid + "', '" + unbanner + "', '" + reason + "');");
+		BanSystem.getInstance().getMySQL().update("DELETE FROM ban WHERE UUID='" + id + "' AND Type='" + Type.CHAT + "'");
+		BanSystem.getInstance().getMySQL().update("INSERT INTO `unmute` (ID, unbanner, Grund) VALUES ('" + banid + "', '" + unbanner + "', '" + reason + "');");
 	}
 	
 	public void unmute(UUID id, String banid, String unbanner, String reason) {
-		BanSystemSpigot.mysql.update("DELETE FROM ban WHERE UUID='" + id + "' AND Type='" + Type.CHAT + "'");
-		BanSystemSpigot.mysql.update("INSERT INTO `unmute` (ID, unbanner, Grund) VALUES ('" + banid + "', '" + unbanner + "', '" + reason + "');");
+		BanSystem.getInstance().getMySQL().update("DELETE FROM ban WHERE UUID='" + id + "' AND Type='" + Type.CHAT + "'");
+		BanSystem.getInstance().getMySQL().update("INSERT INTO `unmute` (ID, unbanner, Grund) VALUES ('" + banid + "', '" + unbanner + "', '" + reason + "');");
 	}
 	
 	public boolean isbanned(UUID id) {
-		ResultSet rs = BanSystemSpigot.mysql.getResult("SELECT UUID FROM `ban` WHERE UUID='" + id + "'");
+		ResultSet rs = BanSystem.getInstance().getMySQL().getResult("SELECT UUID FROM `ban` WHERE UUID='" + id + "'");
 		try {
 			while (rs.next()) {
 				return true;
@@ -120,7 +120,7 @@ public class Banmanager {
 	}
 	
 	public String getReasonNetwork(UUID id) {
-		ResultSet rs = BanSystemSpigot.mysql
+		ResultSet rs = BanSystem.getInstance().getMySQL()
 				.getResult("SELECT Grund FROM `ban` WHERE UUID='" + id + "' AND Type='" + Type.NETWORK + "'");
 		try {
 			while (rs.next()) {
@@ -133,7 +133,7 @@ public class Banmanager {
 	}
 	
 	public String getReasonChat(UUID id) {
-		ResultSet rs = BanSystemSpigot.mysql
+		ResultSet rs = BanSystem.getInstance().getMySQL()
 				.getResult("SELECT Grund FROM `ban` WHERE UUID='" + id + "' AND Type='" + Type.CHAT + "'");
 		try {
 			while (rs.next()) {
@@ -147,7 +147,7 @@ public class Banmanager {
 	
 	public Long getEnd(UUID id, String Grund) {
 		try {
-			ResultSet rs = BanSystemSpigot.mysql
+			ResultSet rs = BanSystem.getInstance().getMySQL()
 					.getResult("SELECT Ende FROM `ban` WHERE UUID='" + id + "' AND Grund='" + Grund + "'");
 			while (rs.next()) {
 				return rs.getLong("Ende");
@@ -160,7 +160,7 @@ public class Banmanager {
 	
 	public String getBanner(UUID id, Type type) {
 		try {
-			ResultSet rs = BanSystemSpigot.mysql.getResult("SELECT Ersteller FROM `ban` WHERE UUID='" + id + "' and Type='"+type+"'");
+			ResultSet rs = BanSystem.getInstance().getMySQL().getResult("SELECT Ersteller FROM `ban` WHERE UUID='" + id + "' and Type='"+type+"'");
 			while (rs.next()) {
 				return rs.getString("Ersteller");
 			}
@@ -171,21 +171,21 @@ public class Banmanager {
 	}
 	
 	public void sendHistorys(UUID id, User sender) {
-		ResultSet rs = BanSystemSpigot.mysql.getResult(
+		ResultSet rs = BanSystem.getInstance().getMySQL().getResult(
 				"SELECT * FROM `banhistory` WHERE UUID='" + id + "'");
-		sender.sendMessage(BanSystemSpigot.PREFIX + "§8§m-------§8» §e" + UUIDFetcher.getName(id) + " §8«§m-------");
+		sender.sendMessage(BanSystem.getInstance().getMessages().getString("prefix") + "§8§m-------§8» §e" + UUIDFetcher.getName(id) + " §8«§m-------");
 
 		if (hashistory(id)) {
 			try {
 				while (rs.next()) {
-					sender.sendMessage(BanSystemSpigot.PREFIX);
-					sender.sendMessage(BanSystemSpigot.PREFIX + "§7Grund §8» §c" + rs.getString("Grund"));
-					sender.sendMessage(BanSystemSpigot.PREFIX + "§7Erstelldatum §8» §c" + rs.getString("Erstelldatum"));
-					sender.sendMessage(BanSystemSpigot.PREFIX + "§7Enddatum §8» §c"+new SimpleDateFormat("dd.MM.yyyy HH:mm:ss").format(new Date(rs.getLong("Ende"))));
-					sender.sendMessage(BanSystemSpigot.PREFIX + "§7Ersteller §8» §c" + rs.getString("Ersteller"));
-					sender.sendMessage(BanSystemSpigot.PREFIX + "§7IP §8» §c" + rs.getString("IP"));
-					sender.sendMessage(BanSystemSpigot.PREFIX + "§7Type §8» §c" + rs.getString("Type"));
-					sender.sendMessage(BanSystemSpigot.PREFIX + "§7ID §8» §c#" + rs.getString("ID"));
+					sender.sendMessage(BanSystem.getInstance().getMessages().getString("prefix"));
+					sender.sendMessage(BanSystem.getInstance().getMessages().getString("prefix") + "§7Grund §8» §c" + rs.getString("Grund"));
+					sender.sendMessage(BanSystem.getInstance().getMessages().getString("prefix") + "§7Erstelldatum §8» §c" + rs.getString("Erstelldatum"));
+					sender.sendMessage(BanSystem.getInstance().getMessages().getString("prefix") + "§7Enddatum §8» §c"+new SimpleDateFormat("dd.MM.yyyy HH:mm:ss").format(new Date(rs.getLong("Ende"))));
+					sender.sendMessage(BanSystem.getInstance().getMessages().getString("prefix") + "§7Ersteller §8» §c" + rs.getString("Ersteller"));
+					sender.sendMessage(BanSystem.getInstance().getMessages().getString("prefix") + "§7IP §8» §c" + rs.getString("IP"));
+					sender.sendMessage(BanSystem.getInstance().getMessages().getString("prefix") + "§7Type §8» §c" + rs.getString("Type"));
+					sender.sendMessage(BanSystem.getInstance().getMessages().getString("prefix") + "§7ID §8» §c#" + rs.getString("ID"));
 					
 					long millis = rs.getLong("duration") * 1000;
 
@@ -227,15 +227,15 @@ public class Banmanager {
 						ramingTime = "§4§lPERMANENT";
 					}
 
-					sender.sendMessage(BanSystemSpigot.PREFIX + "§7Dauer §8» §c" + ramingTime);
-					sender.sendMessage(BanSystemSpigot.PREFIX);
-					sender.sendMessage(BanSystemSpigot.PREFIX + "§8§m------------------------");
+					sender.sendMessage(BanSystem.getInstance().getMessages().getString("prefix") + "§7Dauer §8» §c" + ramingTime);
+					sender.sendMessage(BanSystem.getInstance().getMessages().getString("prefix"));
+					sender.sendMessage(BanSystem.getInstance().getMessages().getString("prefix") + "§8§m------------------------");
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		} else {
-			sender.sendMessage(BanSystemSpigot.messages.getString("History.historynotfound"));
+			sender.sendMessage(BanSystem.getInstance().getMessages().getString("History.historynotfound"));
 		}
 	}
 	
@@ -284,7 +284,7 @@ public class Banmanager {
 	}
 	
 	public boolean hashistory(UUID id, String reason) {
-		ResultSet rs = BanSystemSpigot.mysql
+		ResultSet rs = BanSystem.getInstance().getMySQL()
 				.getResult("SELECT UUID FROM `banhistory` WHERE UUID='" + id + "' AND Grund='" + reason + "'");
 		try {
 			while (rs.next()) {
@@ -297,11 +297,11 @@ public class Banmanager {
 	}
 	
 	public void clearHistory(UUID uuid) {
-		BanSystemSpigot.mysql.update("DELETE FROM banhistory WHERE UUID='" + uuid + "'");
+		BanSystem.getInstance().getMySQL().update("DELETE FROM banhistory WHERE UUID='" + uuid + "'");
 	}
 	
 	public String getCreatedate(UUID id) {
-		ResultSet rs = BanSystemSpigot.mysql.getResult("SELECT Erstelldatum FROM `banhistory` WHERE UUID='" + id + "'");
+		ResultSet rs = BanSystem.getInstance().getMySQL().getResult("SELECT Erstelldatum FROM `banhistory` WHERE UUID='" + id + "'");
 		try {
 			while (rs.next()) {
 				return rs.getString("Erstelldatum");
@@ -313,7 +313,7 @@ public class Banmanager {
 	}
 	
 	public boolean hashistory(UUID id) {
-		ResultSet rs = BanSystemSpigot.mysql.getResult("SELECT UUID FROM `banhistory` WHERE UUID='" + id + "'");
+		ResultSet rs = BanSystem.getInstance().getMySQL().getResult("SELECT UUID FROM `banhistory` WHERE UUID='" + id + "'");
 		try {
 			while (rs.next()) {
 				return true;
@@ -326,7 +326,7 @@ public class Banmanager {
 	}
 	
 	public byte getLevel(UUID id, String reason) {
-		ResultSet rs = BanSystemSpigot.mysql
+		ResultSet rs = BanSystem.getInstance().getMySQL()
 				.getResult("SELECT UUID FROM `banhistory` WHERE UUID='" + id + "' AND Grund='" + reason + "'");
 		byte i = 0;
 		try {
@@ -340,7 +340,7 @@ public class Banmanager {
 	}
 	
 	public Type getType(UUID id, String reason) {
-		ResultSet rs = BanSystemSpigot.mysql
+		ResultSet rs = BanSystem.getInstance().getMySQL()
 				.getResult("SELECT Type FROM `ban` WHERE UUID='" + id + "' AND Grund='" + reason + "'");
 		try {
 			while (rs.next()) {
@@ -353,7 +353,7 @@ public class Banmanager {
 	}
 	
 	public boolean needUUDAndIP(UUID id) {
-		ResultSet rs = BanSystemSpigot.mysql.getResult("SELECT UUID,IP FROM `ban` WHERE UUID='" + id + "'");
+		ResultSet rs = BanSystem.getInstance().getMySQL().getResult("SELECT UUID,IP FROM `ban` WHERE UUID='" + id + "'");
 		try {
 			while (rs.next()) {
 				if (rs.getString("UUID") == null && rs.getString("IP") == null) {
@@ -368,7 +368,7 @@ public class Banmanager {
 	
 	public ArrayList<InetAddress> getIPs() {
 		ArrayList<InetAddress> IPs = new ArrayList<>();
-		ResultSet rs = BanSystemSpigot.mysql.getResult("SELECT IP FROM `ban`");
+		ResultSet rs = BanSystem.getInstance().getMySQL().getResult("SELECT IP FROM `ban`");
 		try {
 			while (rs.next()) {
 				try {
@@ -386,7 +386,7 @@ public class Banmanager {
 	public ArrayList<UUID> getBannedPlayers(InetAddress ip) {
 		ArrayList<UUID> banned = new ArrayList<>();
 		try {
-			ResultSet rs = BanSystemSpigot.mysql.getResult("SELECT UUID FROM `ban` WHERE IP='" + ip + "'");
+			ResultSet rs = BanSystem.getInstance().getMySQL().getResult("SELECT UUID FROM `ban` WHERE IP='" + ip + "'");
 			while (rs.next()) {
 				banned.add(UUID.fromString(rs.getString("UUID")));
 			}
@@ -397,7 +397,7 @@ public class Banmanager {
 	}
 	
 	public boolean isBannedChat(UUID id) {
-		ResultSet rs = BanSystemSpigot.mysql
+		ResultSet rs = BanSystem.getInstance().getMySQL()
 				.getResult("SELECT UUID FROM `ban` WHERE UUID='" + id + "' AND Type='" + Type.CHAT + "'");
 		try {
 			while (rs.next()) {
@@ -410,7 +410,7 @@ public class Banmanager {
 	}
 	
 	public boolean isBannedNetwork(UUID id) {
-		ResultSet rs = BanSystemSpigot.mysql
+		ResultSet rs = BanSystem.getInstance().getMySQL()
 				.getResult("SELECT UUID FROM `ban` WHERE UUID='" + id + "' AND Type='" + Type.NETWORK + "'");
 		try {
 			while (rs.next()) {
@@ -423,7 +423,7 @@ public class Banmanager {
 	}
 	
 	public boolean needIP(UUID uniqueId) {
-		ResultSet rs = BanSystemSpigot.mysql.getResult("SELECT IP FROM ban WHERE UUID = '" + uniqueId + "'");
+		ResultSet rs = BanSystem.getInstance().getMySQL().getResult("SELECT IP FROM ban WHERE UUID = '" + uniqueId + "'");
 		try {
 			while (rs.next()) {
 				return true;
@@ -435,12 +435,12 @@ public class Banmanager {
 	}
 	
 	public void setIP(UUID uniqueId, InetAddress address) {
-		BanSystemSpigot.mysql
+		BanSystem.getInstance().getMySQL()
 				.update("UPDATE ban SET IP = '" + address.getHostAddress() + "' WHERE UUID = '" + uniqueId + "'");
 	}
 	
 	public String getID(UUID uniqueId, Type type) {
-		ResultSet rs = BanSystemSpigot.mysql.getResult("SELECT ID FROM ban WHERE UUID = '" + uniqueId + "' and Type = '" + type + "'");
+		ResultSet rs = BanSystem.getInstance().getMySQL().getResult("SELECT ID FROM ban WHERE UUID = '" + uniqueId + "' and Type = '" + type + "'");
 		try {
 			while(rs.next()) {
 				return rs.getString("ID");

@@ -1,5 +1,7 @@
 package net.coalcube.bansystem.spigot.util;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,6 +47,21 @@ public class SpigotConfig implements Config {
 	@Override
 	public List<String> getStringList(String key) {
 		return config.getStringList(key);
+	}
+	
+	@Override
+	public void set(String key, Object o) {
+		config.set(key, o);
+	}
+	
+	@Override
+	public void save(File f) throws IOException {
+		config.save(f);
+	}
+	
+	@Override
+	public int getInt(String key) {
+		return config.getInt(key);
 	}
 	
 }

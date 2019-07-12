@@ -3,6 +3,7 @@ package net.coalcube.bansystem.core;
 import java.util.List;
 
 import net.coalcube.bansystem.core.util.Config;
+import net.coalcube.bansystem.core.util.MySQL;
 import net.coalcube.bansystem.core.util.User;
 
 public interface BanSystem {
@@ -32,5 +33,9 @@ public interface BanSystem {
 	public void disconnect(User u, String msg);
 	
 	public Config getMessages();
+	
+	public Config getConfiguration();
+	
+	public MySQL getMySQL();
 	
 }
