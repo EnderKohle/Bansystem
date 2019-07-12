@@ -24,6 +24,7 @@ import net.coalcube.bansystem.core.command.CMDkick;
 import net.coalcube.bansystem.core.command.CMDunban;
 import net.coalcube.bansystem.core.command.CMDunmute;
 import net.coalcube.bansystem.core.util.Banmanager;
+import net.coalcube.bansystem.core.util.Config;
 import net.coalcube.bansystem.core.util.MySQL;
 import net.coalcube.bansystem.core.util.Type;
 import net.coalcube.bansystem.core.util.UUIDFetcher;
@@ -518,5 +519,10 @@ public class BanSystemBungee extends Plugin implements BanSystem {
 		if (u.getRawUser() instanceof ProxiedPlayer) {
 			((ProxiedPlayer) u.getRawUser()).disconnect(msg);
 		}
+	}
+	
+	@Override
+	public Config getMessages() {
+		return new BungeeConfig(messages);
 	}
 }

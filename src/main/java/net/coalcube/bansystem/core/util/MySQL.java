@@ -9,11 +9,9 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 
-import org.bukkit.Bukkit;
+import com.mysql.jdbc.Messages;
 
-import net.coalcube.bansystem.bungee.BanSystemBungee;
-import net.md_5.bungee.api.ProxyServer;
-import net.md_5.bungee.api.chat.TextComponent;
+import net.coalcube.bansystem.core.BanSystem;
 
 public class MySQL {
 
@@ -35,28 +33,17 @@ public class MySQL {
 	}
 
 	public void connect() {
+		Config messages = BanSystem.getInstance().getMessages();
 		try {
 			con = DriverManager.getConnection(
 					"jdbc:mysql://" + host + ":" + port + "/" + database + "?autoReconnect=true", user, password);
-			try {
-				ProxyServer.getInstance().getConsole().sendMessage(new TextComponent(
-						BanSystemBungee.PREFIX + "§7Die Verbindung zur MySQL Datenbank wurde §eerfolgreich §7hergestellt."));
-			} catch (Exception e) {
-				Bukkit.getConsoleSender().sendMessage(
-						BanSystemBungee.PREFIX + "§7Die Verbindung zur MySQL Datenbank wurde §eerfolgreich §7hergestellt.");
-			}
+			BanSystem.getInstance().getConsole().sendMessage(messages.getString("Prefix")
+					+ "§7Die Verbindung zur MySQL Datenbank wurde §eerfolgreich §7hergestellt.");
 		} catch (SQLException ex) {
-			try {
-				ProxyServer.getInstance().getConsole().sendMessage(new TextComponent(
-						BanSystemBungee.PREFIX + "§cDie Verbindung zur MySQL Datenbank konnte nicht hergestellt werden."));
-				ProxyServer.getInstance().getConsole().sendMessage(new TextComponent(BanSystemBungee.PREFIX
-						+ "§cBitte überprüfe die Anmeldedaten für die datenbank in der §econifg.yml§c."));
-			} catch (Exception e) {
-				Bukkit.getConsoleSender().sendMessage(
-						BanSystemBungee.PREFIX + "§cDie Verbindung zur MySQL Datenbank konnte nicht hergestellt werden.");
-				Bukkit.getConsoleSender().sendMessage(BanSystemBungee.PREFIX
-						+ "§cBitte überprüfe die Anmeldedaten für die datenbank in der §econifg.yml§c.");
-			}
+			BanSystem.getInstance().getConsole().sendMessage(messages.getString("Prefix")
+					+ "§cDie Verbindung zur MySQL Datenbank konnte nicht hergestellt werden.");
+			BanSystem.getInstance().getConsole().sendMessage(messages.getString("Prefix")
+					+ "§cBitte überprüfe die Anmeldedaten für die datenbank in der §econifg.yml§c.");
 		}
 
 	}
@@ -64,20 +51,11 @@ public class MySQL {
 	public void disconnect() {
 		try {
 			con.close();
-			try {
-				ProxyServer.getInstance().getConsole()
-						.sendMessage(new TextComponent(BanSystemBungee.PREFIX + "§7Verbindung zur Datenbank §egetrennt§7."));
-			} catch (Exception e) {
-				Bukkit.getConsoleSender().sendMessage(BanSystemBungee.PREFIX + "§7Verbindung zur Datenbank §egetrennt§7.");
-			}
+			BanSystem.getInstance().getConsole()
+					.sendMessage(Messages.getString("Prefix") + "§7Verbindung zur Datenbank §egetrennt§7.");
 		} catch (SQLException ex) {
-			try {
-				ProxyServer.getInstance().getConsole().sendMessage(new TextComponent(
-						BanSystemBungee.PREFIX + "§cVerbindung zur Datenbank konnte nicht getrennt werden."));
-			} catch (Exception e) {
-				Bukkit.getConsoleSender()
-						.sendMessage(BanSystemBungee.PREFIX + "§cVerbindung zur Datenbank konnte nicht getrennt werden.");
-			}
+			BanSystem.getInstance().getConsole().sendMessage(
+					Messages.getString("Prefix") + "§cVerbindung zur Datenbank konnte nicht getrennt werden.");
 		}
 	}
 
