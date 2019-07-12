@@ -11,11 +11,15 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
-	
+
 	<repositories>
 		<repository>
 			<id>linux4.de</id>
 			<url>https://mvn.linux4.de/</url>
+		</repository>
+		<repository>
+			<id>waterfall-repo</id>
+			<url>https://papermc.io/repo/repository/maven-public</url>
 		</repository>
 	</repositories>
 
