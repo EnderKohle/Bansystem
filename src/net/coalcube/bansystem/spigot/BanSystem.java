@@ -2,8 +2,12 @@ package net.coalcube.bansystem.spigot;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Arrays;
+import java.util.UUID;
 
+import org.apache.commons.lang.RandomStringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -17,6 +21,7 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import net.coalcube.bansystem.core.util.MySQL;
 import net.coalcube.bansystem.core.util.Type;
 import net.coalcube.bansystem.core.util.UUIDFetcher;
 import net.coalcube.bansystem.spigot.command.CMDban;
@@ -30,13 +35,15 @@ import net.coalcube.bansystem.spigot.command.CMDunmute;
 import net.coalcube.bansystem.spigot.listener.AsyncPlayerChatListener;
 import net.coalcube.bansystem.spigot.listener.PlayerCommandPreprocessListener;
 import net.coalcube.bansystem.spigot.listener.PlayerJoinListener;
-import net.coalcube.bansystem.spigot.util.MySQL;
+import net.coalcube.bansystem.spigot.util.Banmanager;
 import net.coalcube.bansystem.spigot.util.UpdateChecker;
 
 @SuppressWarnings("deprecation")
 public class BanSystem extends JavaPlugin {
 
-	public static Plugin plugin;
+	private static Plugin instance;
+	private static Banmanager banmanager;
+	
 	public static String PREFIX,
 						 NOPERMISSION,
 						 NOPLAYER,
@@ -54,7 +61,9 @@ public class BanSystem extends JavaPlugin {
 	@Override
 	public void onEnable() {
 		
-		plugin = this;
+		instance = this;
+		
+		banmanager = new Banmanager();
 		
 		init();
 		
@@ -69,7 +78,8 @@ public class BanSystem extends JavaPlugin {
 					+ "Grund VARCHAR(100), "
 					+ "Ersteller VARCHAR(100), "
 					+ "IP VARCHAR(100), "
-					+ "Type VARCHAR(100));");
+					+ "Type VARCHAR(100),"
+					+ "ID VARCHAR(10));");
 			
 			mysql.update("CREATE TABLE IF NOT EXISTS banhistory ("
 							+ " UUID VARCHAR(100),"
@@ -79,7 +89,65 @@ public class BanSystem extends JavaPlugin {
 							+ " Erstelldatum VARCHAR(100),"
 							+ " IP VARCHAR(100),"
 							+ " Type VARCHAR(100),"
-							+ " duration DOUBLE);");
+							+ " duration DOUBLE,"
+							+ " ID VARCHAR(10));");
+			
+			ResultSet rs = mysql.getResult("SHOW TABLES LIKE 'ban'");
+			try {
+				while(rs.next()) {
+					ResultSet rs1 = mysql.getResult("SHOW COLUMNS FROM `ban` LIKE 'ID'");
+					boolean existsColumn = false;
+					while(rs1.next()) {
+						existsColumn = true;
+					}
+					if(!existsColumn)
+						mysql.update("ALTER TABLE `ban` ADD `ID` VARCHAR(10) NOT NULL AFTER `Type`;");
+					mysql.update("ALTER TABLE `ban` ADD `ID` VARCHAR(10) NOT NULL AFTER `Type`;");
+					ResultSet rs2 = mysql.getResult("SELECT * FROM `ban`");
+					while (rs2.next()) {
+						mysql.update("UPDATE `ban` SET ID = '" + RandomStringUtils.randomAlphanumeric(8) + "' WHERE UUID = '" + rs.getString("UUID") + "' and Type = '" + rs.getString("Type") + "';");
+					}
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			
+			ResultSet rs1 = mysql.getResult("SHOW TABLES LIKE 'banhistory'");
+			try {
+				while(rs1.next()) {
+					ResultSet rs2 = mysql.getResult("SHOW COLUMNS FROM `ban` LIKE 'ID'");
+					boolean existsColumn = false;
+					while(rs2.next()) {
+						existsColumn = true;
+					}
+					if(!existsColumn)
+						mysql.update("ALTER TABLE `ban` ADD `ID` VARCHAR(10) NOT NULL AFTER `Type`;");
+					mysql.update("ALTER TABLE `banhistory` ADD `ID` VARCHAR(10) NOT NULL AFTER `duration`;");
+					ResultSet rs3 = mysql.getResult("SELECT * FROM `banhistory`");
+					while (rs3.next()) {
+						mysql.update("UPDATE `banhistory` SET ID = '" + new Banmanager().getID(UUID.fromString(rs.getString("UUID")), Type.valueOf(rs.getString("Type")))+ "' WHERE UUID = '" + rs.getString("UUID") + "' and Type = '" + rs.getString("Type") + "';");
+					}
+					ResultSet rs4 = mysql.getResult("SELECT * FROM `banhistory` WHERE ID = ''");
+					while (rs4.next()) {
+						mysql.update("UPDATE `ban` SET ID = '" + UUID.randomUUID().toString().substring(0, 8) + "';");
+					}
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			
+			if(config.getBoolean("needReason.Unban")) {
+				mysql.update("CREATE TABLE IF NOT EXISTS unban ("
+							+ " ID VARCHAR(10),"
+							+ " unbanner VARCHAR(100),"
+							+ " Grund VARCHAR(300));");
+			}
+			if(config.getBoolean("needReason.Unmute")) {
+				mysql.update("CREATE TABLE IF NOT EXISTS unmute ("
+							+ " ID VARCHAR(10),"
+							+ " unbanner VARCHAR(100)"  
+							+ " Grund VARCHAR(300));");
+			}
 		}
 		new BukkitRunnable() {
 			
@@ -112,11 +180,11 @@ public class BanSystem extends JavaPlugin {
 		if(mysql.isConnected())
 			mysql.disconnect();
 		
-		AsyncPlayerChatEvent.getHandlerList().unregister(plugin);
-		PlayerCommandPreprocessEvent.getHandlerList().unregister(plugin);
-		PlayerQuitEvent.getHandlerList().unregister(plugin);
-		PlayerJoinEvent.getHandlerList().unregister(plugin);
-		PlayerPreLoginEvent.getHandlerList().unregister(plugin);
+		AsyncPlayerChatEvent.getHandlerList().unregister(getInstance());
+		PlayerCommandPreprocessEvent.getHandlerList().unregister(getInstance());
+		PlayerQuitEvent.getHandlerList().unregister(getInstance());
+		PlayerJoinEvent.getHandlerList().unregister(getInstance());
+		PlayerPreLoginEvent.getHandlerList().unregister(getInstance());
 		
 		Banscreen = "";
 		
@@ -172,6 +240,9 @@ public class BanSystem extends JavaPlugin {
 				
 				config.set("Ban.KickDelay.enable", false);
 				config.set("Ban.KickDelay.inSecconds", 1);
+				
+				config.set("needReason.Unban", false);
+				config.set("needReason.Unmute", false);
 				
 				config.set("IDs.1.reason", "Unerlaubte Clientmodification/Hackclient");
 				config.set("IDs.1.onlyAdmins", false);
@@ -323,12 +394,43 @@ public class BanSystem extends JavaPlugin {
 				messages.set("Unban.notbanned", "%P%§e%player% §cist nicht gebannt.");
 				messages.set("Unban.usage", "%P%§cBenutze §8» §e/unban §8<§7Spieler§8>");
 				
+				messages.set("Unban.needreason.usage", "%P%§cBenutze §8» §e/unban §8<§7Spieler§8> §8<§7Grund§8>");
+				messages.set("Unban.needreason.success", "%P%§e%player% §7wurde §2erfolgeich §7entbannt.");
+				messages.set("Unban.needreason.notify", Arrays.asList(new String[] {"%P%§8§m------------------------------",
+																					"%P%§e%player% §7wurde von §e%sender% §7entbannt.",
+																					"%P%§7Grund §8» §e%reason%",
+																					"%P%§8§m------------------------------"}));
+				
 				messages.set("Unmute.usage", "%P%§cBenutze §8» §e/unmute §8<§7Spieler§8>");
 				messages.set("Unmute.success", "%P%§7Die Schweigepflicht von §e%player% §7wurde §2aufgehoben!");
 				messages.set("Unmute.notmuted", "%P%§e%player% §cist nicht gemuted.");
 				messages.set("Unmute.notify", "%P%§e%player% §7wurde von §e%sender% §7entmuted.");
 				
+				messages.set("Unmute.needreason.usage", "%P%§cBenutze §8» §e/unmute §8<§7Spieler§8> §8<§7Grund§8>");
+				messages.set("Unmute.needreason.success", "%P%§7Die Schweigepflicht von §e%player% §7wurde §2aufgehoben!");
+				messages.set("unmute.needreason.notify", Arrays.asList(new String[] {"%P%§8§m------------------------------",
+																					"%P%§e%player% §7wurde von §e%sender% §7entmuted.",
+																					"%P%§7Grund §8» §e%reason%",
+																					"%P%§8§m------------------------------"}));
+				
 				messages.set("VPN.warning", "%P%§e%player% §chat sich mit einer VPN verbunden!");
+				
+				messages.set("bansystem.usage", "%P%§7Benutze §e/bansystem help");
+				messages.set("bansystem.help", Arrays.asList(new String[] {"§8§m--------§8[ §cBanSystem §8]§m--------",
+																		   "§e/bansystem help §8» §7Zeigt dir alle Befehle des BanSystems",
+																		   "§e/bansystem reload §8» §7Lädt das Plugin neu",
+																		   "§e/bansystem version §8» §7Zeigt dir die Version des Plugins",
+																		   "§e/ban §8<§7Spieler§8> §8<§7ID§8> §8» §7Bannt/Muted Spieler",
+																		   "§e/kick §8<§7Spieler§8> §8[§7Grund§8] §8» §7Kickt einen Spieler",
+																		   "§e/unban §8<§7Spieler§8> §8» §7Entbannt einen Spieler",
+																		   "§e/unmute §8<§7Spieler§8> §8» §7Entmuted einen Spieler",
+																		   "§e/check §8<§7Spieler§8> §8» §7Prüft ob ein Spieler bestraft ist",
+																		   "§e/history §8<§7Spieler§8> §8» §7Zeigt die History von einem Spieler",
+																		   "§e/deletehistory §8<§7Spieler§8> §8» §7Löscht die History von einem Spieler",
+																		   "§8§m-----------------------------"}));
+				messages.set("bansystem.reload.process", "%P%§7Plugin wird §eneu geladen§7.");
+				messages.set("bansystem.reload.finished", "%P%§7Plugin §eneu geladen§7.");
+				messages.set("bansystem.version", "%P%§7Version §8» §e%ver%");
 				
 				messages.save(messagesfile);
 				
@@ -359,5 +461,11 @@ public class BanSystem extends JavaPlugin {
 		} catch (NullPointerException e) {
 			System.err.println("[Bansystem] Es ist ein Fehler beim laden der Config/messages datei aufgetreten. ["+e.getMessage()+"]");
 		}
+	}
+	public static Plugin getInstance() {
+		return instance;
+	}
+	public static Banmanager getBanmanager() {
+		return banmanager;
 	}
 }

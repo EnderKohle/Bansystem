@@ -5,8 +5,8 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import net.coalcube.bansystem.bungee.BanSystem;
-import net.coalcube.bansystem.bungee.util.Banmanager;
 import net.coalcube.bansystem.bungee.util.UpdateChecker;
+import net.coalcube.bansystem.bungee.util.Banmanager;
 import net.coalcube.bansystem.core.util.Type;
 import net.coalcube.bansystem.core.util.URLUtils;
 import net.coalcube.bansystem.core.util.UUIDFetcher;
@@ -24,16 +24,18 @@ import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 
 public class LoginListener implements Listener {
+	
+	private static Banmanager bm = BanSystem.getBanmanager();
+	
 	@SuppressWarnings("deprecation")
 	@EventHandler
 	public void onLogin(LoginEvent e) {
 		if (BanSystem.mysql.isConnected()) {
-			e.registerIntent(BanSystem.plugin);
+			e.registerIntent(BanSystem.getInstance());
 			new Thread(new Runnable() {
 
 				@Override
 				public void run() {
-					Banmanager bm = new Banmanager();
 					PendingConnection con = e.getConnection();
 
 					if (bm.isBannedNetwork(con.getUniqueId())) {
@@ -44,7 +46,7 @@ public class LoginListener implements Listener {
 							BaseComponent component = new TextComponent(
 									BanSystem.Banscreen.replaceAll("%Reason%", bm.getReasonNetwork(con.getUniqueId()))
 											.replaceAll("%ReamingTime%", bm.getRemainingTime(con.getUniqueId(),
-													bm.getReasonNetwork(con.getUniqueId()))).replaceAll("&", "§"));
+													bm.getReasonNetwork(con.getUniqueId()))).replaceAll("&", "Â§"));
 							e.setCancelReason(component);
 							e.setCancelled(true);
 							// p.disconnect(component);
@@ -55,17 +57,17 @@ public class LoginListener implements Listener {
 							bm.unban(con.getUniqueId());
 							ProxyServer.getInstance().getConsole()
 									.sendMessage(BanSystem.messages.getString("Ban.Network.autounban")
-											.replaceAll("%P%", BanSystem.PREFIX).replaceAll("%player%", con.getName()).replaceAll("&", "§"));
+											.replaceAll("%P%", BanSystem.PREFIX).replaceAll("%player%", con.getName()).replaceAll("&", "Â§"));
 							for (ProxiedPlayer all : ProxyServer.getInstance().getPlayers()) {
 								if (all.hasPermission("bansys.notify")) {
 									all.sendMessage(BanSystem.messages.getString("Ban.Network.autounban")
-											.replaceAll("%P%", BanSystem.PREFIX).replaceAll("%player%", con.getName()).replaceAll("&", "§"));
+											.replaceAll("%P%", BanSystem.PREFIX).replaceAll("%player%", con.getName()).replaceAll("&", "Â§"));
 								}
 							}
 						}
 					}
 					if (!e.isCancelled()) {
-						ProxyServer.getInstance().getScheduler().schedule(BanSystem.plugin, new Runnable() {
+						ProxyServer.getInstance().getScheduler().schedule(BanSystem.getInstance(), new Runnable() {
 
 							@Override
 							public void run() {
@@ -84,7 +86,7 @@ public class LoginListener implements Listener {
 													all.sendMessage(BanSystem.messages.getString("VPN.warning")
 															.replaceAll("%P%", BanSystem.PREFIX)
 															.replaceAll("%player%", p.getDisplayName())
-															.replaceAll("&", "§"));
+															.replaceAll("&", "Â§"));
 												}
 											}
 										}
@@ -92,12 +94,12 @@ public class LoginListener implements Listener {
 
 									if (p.hasPermission("bansys.ban.admin")) {
 										try {
-											if (new UpdateChecker(BanSystem.plugin, 65863).checkForUpdates()) {
+											if (new UpdateChecker(BanSystem.getInstance(), 65863).checkForUpdates()) {
 												TextComponent comp = new TextComponent(BanSystem.PREFIX
-														+ "§7Lade es dir unter §ehttps://www.spigotmc.org/resources/bansystem-mit-ids.65863/ §7runter um aktuell zu bleiben.");
+														+ "Â§7Lade es dir unter Â§ehttps://www.spigotmc.org/resources/bansystem-mit-ids.65863/ Â§7runter um aktuell zu bleiben.");
 
 												p.sendMessage(new TextComponent(
-														BanSystem.PREFIX + "§cEin neues Update ist verfügbar."));
+														BanSystem.PREFIX + "Â§cEin neues Update ist verfÃ¼gbar."));
 
 												comp.setClickEvent(new ClickEvent(Action.OPEN_URL,
 														"https://www.spigotmc.org/resources/bansystem-mit-ids.65863/"));
@@ -134,20 +136,20 @@ public class LoginListener implements Listener {
 														BanSystem.config.getInt("IPautoban.banid"), "CONSOLE",
 														p.getAddress().getAddress());
 												ProxyServer.getInstance().getConsole()
-														.sendMessage(BanSystem.PREFIX + "§cDer 2. Account von §e"
-																+ names + " §cwurde automatisch gebannt für §e"
+														.sendMessage(BanSystem.PREFIX + "Â§cDer 2. Account von Â§e"
+																+ names + " Â§cwurde automatisch gebannt fÃ¼r Â§e"
 																+ BanSystem.config.getString("IDs."
 																		+ BanSystem.config.getInt("IPautoban.banid")
 																		+ ".reason")
-																+ "§c.");
+																+ "Â§c.");
 												for (ProxiedPlayer all : ProxyServer.getInstance().getPlayers()) {
 													if (all.hasPermission("bansys.notify")) {
-														all.sendMessage(BanSystem.PREFIX + "§cDer 2. Account von §e"
-																+ names + " §cwurde automatisch gebannt für §e"
+														all.sendMessage(BanSystem.PREFIX + "Â§cDer 2. Account von Â§e"
+																+ names + " Â§cwurde automatisch gebannt fÃ¼r Â§e"
 																+ BanSystem.config.getString("IDs."
 																		+ BanSystem.config.getInt("IPautoban.banid")
 																		+ ".reason")
-																+ "§c.");
+																+ "Â§c.");
 													}
 												}
 												BaseComponent component = new TextComponent(BanSystem.Banscreen
@@ -160,12 +162,12 @@ public class LoginListener implements Listener {
 												p.disconnect(component);
 											} else {
 												ProxyServer.getInstance().getConsole()
-														.sendMessage(BanSystem.PREFIX + "§e" + p.getName()
-																+ " §cist womöglich ein 2. Account von §e" + names);
+														.sendMessage(BanSystem.PREFIX + "Â§e" + p.getName()
+																+ " Â§cist womÃ¶glich ein 2. Account von Â§e" + names);
 												for (ProxiedPlayer all : ProxyServer.getInstance().getPlayers()) {
 													if (all.hasPermission("bansys.notify")) {
-														all.sendMessage(BanSystem.PREFIX + "§e" + p.getName()
-																+ " §cist womöglich ein 2. Account von §e" + names);
+														all.sendMessage(BanSystem.PREFIX + "Â§e" + p.getName()
+																+ " Â§cist womÃ¶glich ein 2. Account von Â§e" + names);
 													}
 												}
 											}
@@ -175,7 +177,7 @@ public class LoginListener implements Listener {
 							}
 						}, 1, TimeUnit.SECONDS);
 					}
-					e.completeIntent(BanSystem.plugin);
+					e.completeIntent(BanSystem.getInstance());
 				}
 			}).start();
 		}

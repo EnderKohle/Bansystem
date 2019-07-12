@@ -13,7 +13,7 @@ import net.coalcube.bansystem.spigot.util.Banmanager;
 
 public class AsyncPlayerChatListener implements Listener {
 
-	private Banmanager bm = new Banmanager();
+	private static Banmanager bm = BanSystem.getBanmanager();
 
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void onChat(AsyncPlayerChatEvent e) {
@@ -29,19 +29,19 @@ public class AsyncPlayerChatListener implements Listener {
 								.replaceAll("%reason%", bm.getReasonChat(p.getUniqueId()))
 								.replaceAll("%reamingtime%",
 										bm.getRemainingTime(p.getUniqueId(), bm.getReasonChat(p.getUniqueId())))
-								.replaceAll("&", "ง"));
+								.replaceAll("&", "ยง"));
 					}
 				} else {
 					bm.unmute(p.getUniqueId());
 					Bukkit.getConsoleSender()
 							.sendMessage(BanSystem.messages.getString("Ban.Chat.autounmute")
 									.replaceAll("%P%", BanSystem.PREFIX).replaceAll("%player%", p.getDisplayName())
-									.replaceAll("&", "ง"));
+									.replaceAll("&", "ยง"));
 					for (Player all : Bukkit.getOnlinePlayers()) {
 						if (all.hasPermission("system.ban")) {
 							all.sendMessage(BanSystem.messages.getString("Ban.Chat.autounmute")
 									.replaceAll("%P%", BanSystem.PREFIX).replaceAll("%player%", p.getDisplayName())
-									.replaceAll("&", "ง"));
+									.replaceAll("&", "ยง"));
 						}
 					}
 				}

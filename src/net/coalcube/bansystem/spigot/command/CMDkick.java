@@ -33,16 +33,16 @@ public class CMDkick implements CommandExecutor, TabExecutor {
 
 								} else {
 									p.sendMessage(BanSystem.messages.getString("Kick.cannotkickteammembers")
-											.replaceAll("%P%", BanSystem.PREFIX).replaceAll("&", "ง"));
+											.replaceAll("%P%", BanSystem.PREFIX).replaceAll("&", "ยง"));
 								}
 							}
 						} else {
 							p.sendMessage(BanSystem.messages.getString("Kick.cannotkickyouselfe")
-									.replaceAll("%P%", BanSystem.PREFIX).replaceAll("&", "ง"));
+									.replaceAll("%P%", BanSystem.PREFIX).replaceAll("&", "ยง"));
 						}
 					} else {
 						p.sendMessage(BanSystem.messages.getString("PlayerNotFound").replaceAll("%P%", BanSystem.PREFIX)
-								.replaceAll("&", "ง"));
+								.replaceAll("&", "ยง"));
 					}
 				} else if (args.length > 1) {
 					Player target = Bukkit.getPlayer(args[0]);
@@ -57,20 +57,20 @@ public class CMDkick implements CommandExecutor, TabExecutor {
 
 								} else {
 									p.sendMessage(BanSystem.messages.getString("Kick.cannotkickteammembers")
-											.replaceAll("%P%", BanSystem.PREFIX).replaceAll("&", "ง"));
+											.replaceAll("%P%", BanSystem.PREFIX).replaceAll("&", "ยง"));
 								}
 							}
 						} else {
 							p.sendMessage(BanSystem.messages.getString("Kick.cannotkickyouselfe")
-									.replaceAll("%P%", BanSystem.PREFIX).replaceAll("&", "ง"));
+									.replaceAll("%P%", BanSystem.PREFIX).replaceAll("&", "ยง"));
 						}
 					} else {
 						p.sendMessage(BanSystem.messages.getString("PlayerNotFound").replaceAll("%P%", BanSystem.PREFIX)
-								.replaceAll("&", "ง"));
+								.replaceAll("&", "ยง"));
 					}
 				} else {
 					p.sendMessage(BanSystem.messages.getString("Kick.usage").replaceAll("%P%", BanSystem.PREFIX)
-							.replaceAll("&", "ง"));
+							.replaceAll("&", "ยง"));
 				}
 			} else {
 				p.sendMessage(BanSystem.NODBCONNECTION);
@@ -82,16 +82,16 @@ public class CMDkick implements CommandExecutor, TabExecutor {
 	}
 
 	private void noReasonKick(CommandSender p, Player target) {
-		target.kickPlayer(BanSystem.messages.getString("Kick.noreason.screen").replaceAll("&", "ง"));
+		target.kickPlayer(BanSystem.messages.getString("Kick.noreason.screen").replaceAll("&", "ยง"));
 		p.sendMessage(BanSystem.messages.getString("Kick.success").replaceAll("%P%", BanSystem.PREFIX)
-				.replaceAll("%player%", target.getDisplayName()).replaceAll("&", "ง"));
+				.replaceAll("%player%", target.getDisplayName()).replaceAll("&", "ยง"));
 
 		for (Player all : Bukkit.getOnlinePlayers()) {
 			if (all.hasPermission("bansys.notify") && all != p) {
 				for (String message : BanSystem.messages.getStringList("Kick.noreason.notify")) {
 					all.sendMessage(
 							message.replaceAll("%P%", BanSystem.PREFIX).replaceAll("%player%", target.getDisplayName())
-									.replaceAll("%sender%", p.getName()).replaceAll("&", "ง"));
+									.replaceAll("%sender%", p.getName()).replaceAll("&", "ยง"));
 				}
 			}
 		}
@@ -99,7 +99,7 @@ public class CMDkick implements CommandExecutor, TabExecutor {
 
 	private void ReasonKick(CommandSender p, Player target, String[] args) {
 		p.sendMessage(BanSystem.messages.getString("Kick.success").replaceAll("%P%", BanSystem.PREFIX)
-				.replaceAll("%player%", target.getDisplayName()).replaceAll("&", "ง"));
+				.replaceAll("%player%", target.getDisplayName()).replaceAll("&", "ยง"));
 		String msg = "";
 		for (int i = 1; i < args.length; i++) {
 			msg = msg + args[i] + " ";
@@ -112,7 +112,7 @@ public class CMDkick implements CommandExecutor, TabExecutor {
 				for (String message : BanSystem.messages.getStringList("Kick.reason.notify")) {
 					all.sendMessage(message.replaceAll("%P%", BanSystem.PREFIX)
 							.replaceAll("%player%", target.getDisplayName()).replaceAll("%sender%", p.getName())
-							.replaceAll("%reason%", msg).replaceAll("&", "ง"));
+							.replaceAll("%reason%", msg).replaceAll("&", "ยง"));
 				}
 			}
 		}

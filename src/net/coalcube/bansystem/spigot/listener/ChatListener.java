@@ -12,7 +12,7 @@ import net.coalcube.bansystem.spigot.util.Banmanager;
 
 public class ChatListener implements Listener {
 	
-	private Banmanager bm = new Banmanager();
+	private static Banmanager bm = BanSystem.getBanmanager();
 	
 	@EventHandler
 	public void onChat(AsyncPlayerChatEvent e) {
@@ -25,17 +25,17 @@ public class ChatListener implements Listener {
 						e.setCancelled(true);
 						for (String message : BanSystem.messages.getStringList("Ban.Chat.Screen")) {
 							p.sendMessage(message.replaceAll("%P%", BanSystem.PREFIX).replaceAll("%reason%", bm.getReasonChat(p.getUniqueId()))
-									.replaceAll("%reamingtime%", bm.getRemainingTime(p.getUniqueId(), bm.getReasonChat(p.getUniqueId()))).replaceAll("&", "ง"));
+									.replaceAll("%reamingtime%", bm.getRemainingTime(p.getUniqueId(), bm.getReasonChat(p.getUniqueId()))).replaceAll("&", "ยง"));
 						}
 					} else {
 						bm.unmute(p.getUniqueId());
-						Bukkit.getConsoleSender().sendMessage(BanSystem.messages.getString("Ban.Chat.autounmute").replaceAll("%P%", BanSystem.PREFIX).replaceAll("%player%", p.getDisplayName()).replaceAll("&", "ง"));
+						Bukkit.getConsoleSender().sendMessage(BanSystem.messages.getString("Ban.Chat.autounmute").replaceAll("%P%", BanSystem.PREFIX).replaceAll("%player%", p.getDisplayName()).replaceAll("&", "ยง"));
 						for(Player all : Bukkit.getOnlinePlayers()) {
 							if(all.hasPermission("system.ban")) {
 								all.sendMessage(BanSystem.messages.getString("Ban.Chat.autounmute")
 										.replaceAll("%P%", BanSystem.PREFIX)
 										.replaceAll("%player%", p.getDisplayName())
-										.replaceAll("&", "ง"));
+										.replaceAll("&", "ยง"));
 							}
 						}
 					}

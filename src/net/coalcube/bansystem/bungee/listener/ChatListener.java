@@ -10,7 +10,9 @@ import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 
 public class ChatListener implements Listener {
-	private Banmanager bm = new Banmanager();
+	
+	private static Banmanager bm = BanSystem.getBanmanager();
+	
 	@SuppressWarnings("deprecation")
 	@EventHandler
 	public void onChat(ChatEvent e) {
@@ -30,17 +32,17 @@ public class ChatListener implements Listener {
 						e.setCancelled(true);
 						for (String message : BanSystem.messages.getStringList("Ban.Chat.Screen")) {
 							p.sendMessage(message.replaceAll("%P%", BanSystem.PREFIX).replaceAll("%reason%", bm.getReasonChat(p.getUniqueId()))
-									.replaceAll("%reamingtime%", bm.getRemainingTime(p.getUniqueId(), bm.getReasonChat(p.getUniqueId()))).replaceAll("&", "ง"));
+									.replaceAll("%reamingtime%", bm.getRemainingTime(p.getUniqueId(), bm.getReasonChat(p.getUniqueId()))).replaceAll("&", "ยง"));
 						}
 					} else {
 						bm.unmute(p.getUniqueId());
-						ProxyServer.getInstance().getConsole().sendMessage(BanSystem.messages.getString("Ban.Chat.autounmute").replaceAll("%P%", BanSystem.PREFIX).replaceAll("%player%", p.getDisplayName()).replaceAll("&", "ง"));
+						ProxyServer.getInstance().getConsole().sendMessage(BanSystem.messages.getString("Ban.Chat.autounmute").replaceAll("%P%", BanSystem.PREFIX).replaceAll("%player%", p.getDisplayName()).replaceAll("&", "ยง"));
 						for(ProxiedPlayer all : ProxyServer.getInstance().getPlayers()) {
 							if(all.hasPermission("system.ban")) {
 								all.sendMessage(BanSystem.messages.getString("Ban.Chat.autounmute")
 										.replaceAll("%P%", BanSystem.PREFIX)
 										.replaceAll("%player%", p.getDisplayName())
-										.replaceAll("&", "ง"));
+										.replaceAll("&", "ยง"));
 							}
 						}
 					}

@@ -22,7 +22,7 @@ public class UpdateChecker {
         try {
             checkURL = new URL("https://api.spigotmc.org/legacy/update.php?resource=" + projectID);
         } catch(MalformedURLException e) {
-            ProxyServer.getInstance().getLogger().warning("ง4Could not connect to Spigotmc.org!");
+            ProxyServer.getInstance().getLogger().warning("ยง4Could not connect to Spigotmc.org!");
         }
     }
     public String getResourceUrl() {

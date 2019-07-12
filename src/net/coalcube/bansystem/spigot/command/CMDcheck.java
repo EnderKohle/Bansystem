@@ -16,7 +16,7 @@ import net.coalcube.bansystem.spigot.util.TabCompleteUtil;
 
 public class CMDcheck implements CommandExecutor, TabExecutor {
 
-	Banmanager bm = new Banmanager();
+	private static Banmanager bm = BanSystem.getBanmanager();
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String lable, String[] args) {
@@ -26,56 +26,52 @@ public class CMDcheck implements CommandExecutor, TabExecutor {
 					UUID id = UUIDFetcher.getUUID(args[0]);
 					if (id == null) {
 						sender.sendMessage(
-								BanSystem.messages.getString("Playerdoesnotexist").replaceAll("%P%", BanSystem.PREFIX).replaceAll("&", "§"));
+								BanSystem.messages.getString("Playerdoesnotexist").replaceAll("%P%", BanSystem.PREFIX).replaceAll("&", "Â§"));
 						return false;
 					}
 
 					if (bm.isBannedChat(id) && bm.isBannedNetwork(id)) {
 
-						sender.sendMessage(
-								BanSystem.PREFIX + "§8§m------§8» §e" + UUIDFetcher.getName(id) + " §8«§m------");
-						sender.sendMessage(BanSystem.PREFIX + "§7Von §8» §c" + bm.getBanner(id));
-						sender.sendMessage(BanSystem.PREFIX + "§7Grund §8» §c" + bm.getReasonChat(id));
-						sender.sendMessage(BanSystem.PREFIX + "§7Verbleibende Zeit §8» §c"
-								+ bm.getRemainingTime(id, bm.getReasonChat(id)));
-						sender.sendMessage(BanSystem.PREFIX + "§7Type §8» §c" + Type.CHAT);
-						sender.sendMessage(BanSystem.PREFIX + "§7Level §8» §c" + bm.getLevel(id, bm.getReasonChat(id)));
+						sender.sendMessage(BanSystem.PREFIX + "Â§8Â§m------Â§8Â» Â§e" + UUIDFetcher.getName(id) + " Â§8Â«Â§m------");
+						sender.sendMessage(BanSystem.PREFIX + "Â§7Von Â§8Â» Â§c" + bm.getBanner(id, Type.CHAT));
+						sender.sendMessage(BanSystem.PREFIX + "Â§7Grund Â§8Â» Â§c" + bm.getReasonChat(id));
+						sender.sendMessage(BanSystem.PREFIX + "Â§7Verbleibende Zeit Â§8Â» Â§c" + bm.getRemainingTime(id, bm.getReasonChat(id)));
+						sender.sendMessage(BanSystem.PREFIX + "Â§7Type Â§8Â» Â§c" + Type.CHAT);
+						sender.sendMessage(BanSystem.PREFIX + "Â§7Level Â§8Â» Â§c" + bm.getLevel(id, bm.getReasonChat(id)));
 						sender.sendMessage(BanSystem.PREFIX);
-						sender.sendMessage(BanSystem.PREFIX + "§7Von §8» §c" + bm.getBanner(id));
-						sender.sendMessage(BanSystem.PREFIX + "§7Grund §8» §c" + bm.getReasonNetwork(id));
-						sender.sendMessage(BanSystem.PREFIX + "§7Verbleibende Zeit §8» §c"
-								+ bm.getRemainingTime(id, bm.getReasonNetwork(id)));
-						sender.sendMessage(BanSystem.PREFIX + "§7Type §8» §c" + Type.NETWORK);
-						sender.sendMessage(
-								BanSystem.PREFIX + "§7Level §8» §c" + bm.getLevel(id, bm.getReasonNetwork(id)));
+						sender.sendMessage(BanSystem.PREFIX + "Â§7Von Â§8Â» Â§c" + bm.getBanner(id, Type.NETWORK));
+						sender.sendMessage(BanSystem.PREFIX + "Â§7Grund Â§8Â» Â§c" + bm.getReasonNetwork(id));
+						sender.sendMessage(BanSystem.PREFIX + "Â§7Verbleibende Zeit Â§8Â» Â§c" + bm.getRemainingTime(id, bm.getReasonNetwork(id)));
+						sender.sendMessage(BanSystem.PREFIX + "Â§7Type Â§8Â» Â§c" + Type.NETWORK);
+						sender.sendMessage(BanSystem.PREFIX + "Â§7Level Â§8Â» Â§c" + bm.getLevel(id, bm.getReasonNetwork(id)));
 
 					} else if (bm.isBannedChat(id)) {
 
 						sender.sendMessage(
-								BanSystem.PREFIX + "§8§m------§8» §e" + UUIDFetcher.getName(id) + " §8«§m------");
-						sender.sendMessage(BanSystem.PREFIX + "§7Von §8» §c" + bm.getBanner(id));
-						sender.sendMessage(BanSystem.PREFIX + "§7Grund §8» §c" + bm.getReasonChat(id));
-						sender.sendMessage(BanSystem.PREFIX + "§7Verbleibende Zeit §8» §c"
+								BanSystem.PREFIX + "Â§8Â§m------Â§8Â» Â§e" + UUIDFetcher.getName(id) + " Â§8Â«Â§m------");
+						sender.sendMessage(BanSystem.PREFIX + "Â§7Von Â§8Â» Â§c" + bm.getBanner(id, Type.CHAT));
+						sender.sendMessage(BanSystem.PREFIX + "Â§7Grund Â§8Â» Â§c" + bm.getReasonChat(id));
+						sender.sendMessage(BanSystem.PREFIX + "Â§7Verbleibende Zeit Â§8Â» Â§c"
 								+ bm.getRemainingTime(id, bm.getReasonChat(id)));
-						sender.sendMessage(BanSystem.PREFIX + "§7Type §8» §c" + Type.CHAT);
-						sender.sendMessage(BanSystem.PREFIX + "§7Level §8» §c" + bm.getLevel(id, bm.getReasonChat(id)));
+						sender.sendMessage(BanSystem.PREFIX + "Â§7Type Â§8Â» Â§c" + Type.CHAT);
+						sender.sendMessage(BanSystem.PREFIX + "Â§7Level Â§8Â» Â§c" + bm.getLevel(id, bm.getReasonChat(id)));
 
 					} else if (bm.isBannedNetwork(id)) {
 						sender.sendMessage(
-								BanSystem.PREFIX + "§8§m------§8» §e" + UUIDFetcher.getName(id) + " §8«§m------");
-						sender.sendMessage(BanSystem.PREFIX + "§7Von §8» §c" + bm.getBanner(id));
-						sender.sendMessage(BanSystem.PREFIX + "§7Grund §8» §c" + bm.getReasonNetwork(id));
-						sender.sendMessage(BanSystem.PREFIX + "§7Verbleibende Zeit §8» §c"
+								BanSystem.PREFIX + "Â§8Â§m------Â§8Â» Â§e" + UUIDFetcher.getName(id) + " Â§8Â«Â§m------");
+						sender.sendMessage(BanSystem.PREFIX + "Â§7Von Â§8Â» Â§c" + bm.getBanner(id, Type.NETWORK));
+						sender.sendMessage(BanSystem.PREFIX + "Â§7Grund Â§8Â» Â§c" + bm.getReasonNetwork(id));
+						sender.sendMessage(BanSystem.PREFIX + "Â§7Verbleibende Zeit Â§8Â» Â§c"
 								+ bm.getRemainingTime(id, bm.getReasonNetwork(id)));
-						sender.sendMessage(BanSystem.PREFIX + "§7Type §8» §c" + Type.NETWORK);
+						sender.sendMessage(BanSystem.PREFIX + "Â§7Type Â§8Â» Â§c" + Type.NETWORK);
 						sender.sendMessage(
-								BanSystem.PREFIX + "§7Level §8» §c" + bm.getLevel(id, bm.getReasonNetwork(id)));
+								BanSystem.PREFIX + "Â§7Level Â§8Â» Â§c" + bm.getLevel(id, bm.getReasonNetwork(id)));
 					} else {
 						sender.sendMessage(BanSystem.messages.getString("Playernotbanned")
-								.replaceAll("%P%", BanSystem.PREFIX).replaceAll("%player%", UUIDFetcher.getName(id)).replaceAll("&", "§"));
+								.replaceAll("%P%", BanSystem.PREFIX).replaceAll("%player%", UUIDFetcher.getName(id)).replaceAll("&", "Â§"));
 					}
 				} else {
-					sender.sendMessage(BanSystem.messages.getString("Check.usage").replaceAll("%P%", BanSystem.PREFIX).replaceAll("&", "§"));
+					sender.sendMessage(BanSystem.messages.getString("Check.usage").replaceAll("%P%", BanSystem.PREFIX).replaceAll("&", "Â§"));
 				}
 			} else {
 				sender.sendMessage(BanSystem.NODBCONNECTION);

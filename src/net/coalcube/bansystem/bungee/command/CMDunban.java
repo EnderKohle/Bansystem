@@ -3,9 +3,11 @@ package net.coalcube.bansystem.bungee.command;
 import java.util.UUID;
 
 import net.coalcube.bansystem.bungee.BanSystem;
-import net.coalcube.bansystem.bungee.util.Banmanager;
 import net.coalcube.bansystem.bungee.util.TabCompleteUtil;
+import net.coalcube.bansystem.bungee.util.Banmanager;
 import net.coalcube.bansystem.core.util.UUIDFetcher;
+import net.coalcube.bansystem.core.util.Type;
+import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -18,7 +20,7 @@ public class CMDunban extends Command implements TabExecutor {
 		super(name);
 	}
 
-	Banmanager bm = new Banmanager();
+	private static Banmanager bm = BanSystem.getBanmanager();
 
 	@SuppressWarnings("deprecation")
 	@Override
@@ -31,29 +33,73 @@ public class CMDunban extends Command implements TabExecutor {
 						sender.sendMessage(
 								BanSystem.messages.getString("Playerdoesnotexist")
 									.replaceAll("%P%", BanSystem.PREFIX)
-									.replaceAll("&", "ง"));
+									.replaceAll("&", "ยง"));
 						return;
 					}
 					if (bm.isBannedNetwork(id)) {
-						bm.unban(id);
-						sender.sendMessage(BanSystem.messages.getString("Unban.success")
-								.replaceAll("%P%", BanSystem.PREFIX).replaceAll("%player%", UUIDFetcher.getName(id)));
-						for (ProxiedPlayer all : ProxyServer.getInstance().getPlayers()) {
-							if (all.hasPermission("bansys.notify") && all != sender) {
-								all.sendMessage(
-										BanSystem.messages.getString("Unban.notify").replaceAll("%P%", BanSystem.PREFIX)
-												.replaceAll("%player%", UUIDFetcher.getName(id))
-												.replaceAll("%sender%", sender.getName())
-												.replaceAll("&", "ง"));
+						if(args.length > 1 && BanSystem.config.getBoolean("needReason.Unban")) {
+							
+							String reason = "";
+							for (int i = 1; i < args.length; i++) {
+								reason = reason + args[i] + " ";
 							}
+							
+							sender.sendMessage(ChatColor.translateAlternateColorCodes('&', 
+									BanSystem.messages.getString("Unban.needreason.success")
+									.replaceAll("%P%", BanSystem.PREFIX)
+									.replaceAll("%player%", UUIDFetcher.getName(id))
+									.replaceAll("%reason%", reason)));
+							for (ProxiedPlayer all : ProxyServer.getInstance().getPlayers()) {
+								if (all.hasPermission("bansys.notify") && all != sender) {
+									all.sendMessage(ChatColor.translateAlternateColorCodes('&', 
+											BanSystem.messages.getString("Unban.needreason.notify")
+													.replaceAll("%P%", BanSystem.PREFIX)
+													.replaceAll("%player%", UUIDFetcher.getName(id))
+													.replaceAll("%sender%", sender.getName())
+													.replaceAll("%reason%", reason)));
+								}
+							}
+							ProxyServer.getInstance().getConsole().sendMessage(ChatColor.translateAlternateColorCodes('&', 
+									BanSystem.messages.getString("Unban.needreason.notify")
+									.replaceAll("%P%", BanSystem.PREFIX)
+									.replaceAll("%player%", UUIDFetcher.getName(id))
+									.replaceAll("%sender%", sender.getName())
+									.replaceAll("%reason%", reason)));
+							
+							if(sender instanceof ProxiedPlayer) {
+								ProxiedPlayer p = (ProxiedPlayer) sender;
+								bm.unban(id, bm.getID(id, Type.NETWORK), p.getUniqueId() , reason);
+							} else
+								bm.unban(id, bm.getID(id, Type.NETWORK), sender.getName(), reason);
+							
+						} else {
+							
+							sender.sendMessage(BanSystem.messages.getString("Unban.success")
+									.replaceAll("%P%", BanSystem.PREFIX).replaceAll("%player%", UUIDFetcher.getName(id)));
+							for (ProxiedPlayer all : ProxyServer.getInstance().getPlayers()) {
+								if (all.hasPermission("bansys.notify") && all != sender) {
+									all.sendMessage(ChatColor.translateAlternateColorCodes('&', 
+											BanSystem.messages.getString("Unban.notify")
+													.replaceAll("%P%", BanSystem.PREFIX)
+													.replaceAll("%player%", UUIDFetcher.getName(id))
+													.replaceAll("%sender%", sender.getName())
+													.replaceAll("&", "ยง")));
+								}
+							}
+							ProxyServer.getInstance().getConsole().sendMessage(ChatColor.translateAlternateColorCodes('&', 
+									BanSystem.messages.getString("Unban.notify")
+									.replaceAll("%P%", BanSystem.PREFIX)
+									.replaceAll("%player%", UUIDFetcher.getName(id))
+									.replaceAll("%sender%", sender.getName())));
+							
+							bm.unban(id);
+							
 						}
-						ProxyServer.getInstance().getConsole().sendMessage(BanSystem.messages.getString("Unban.notify").replaceAll("%P%", BanSystem.PREFIX)
-								.replaceAll("%player%", UUIDFetcher.getName(id)).replaceAll("%sender%", sender.getName()).replaceAll("&", "ง"));
 					} else {
-						sender.sendMessage(BanSystem.messages.getString("Unban.notbanned").replaceAll("%P%", BanSystem.PREFIX).replaceAll("%player%", UUIDFetcher.getName(id)).replaceAll("&", "ง"));
+						sender.sendMessage(BanSystem.messages.getString("Unban.notbanned").replaceAll("%P%", BanSystem.PREFIX).replaceAll("%player%", UUIDFetcher.getName(id)).replaceAll("&", "ยง"));
 					}
 				} else {
-					sender.sendMessage(BanSystem.messages.getString("Unban.usage").replaceAll("%P%", BanSystem.PREFIX).replaceAll("&", "ง"));
+					sender.sendMessage(BanSystem.messages.getString("Unban.usage").replaceAll("%P%", BanSystem.PREFIX).replaceAll("&", "ยง"));
 				}
 			} else {
 				sender.sendMessage(BanSystem.NODBCONNECTION);

@@ -3,8 +3,8 @@ package net.coalcube.bansystem.bungee.command;
 import java.util.UUID;
 
 import net.coalcube.bansystem.bungee.BanSystem;
-import net.coalcube.bansystem.bungee.util.Banmanager;
 import net.coalcube.bansystem.bungee.util.TabCompleteUtil;
+import net.coalcube.bansystem.bungee.util.Banmanager;
 import net.coalcube.bansystem.core.util.UUIDFetcher;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.plugin.Command;
@@ -16,7 +16,7 @@ public class CMDhistory extends Command implements TabExecutor {
 		super(name);
 	}
 
-	Banmanager bm = new Banmanager();
+	private static Banmanager bm = BanSystem.getBanmanager();
 
 	@SuppressWarnings("deprecation")
 	@Override
@@ -26,16 +26,16 @@ public class CMDhistory extends Command implements TabExecutor {
 				if (args.length == 1) {
 					UUID id = UUIDFetcher.getUUID(args[0]);
 					if(id == null) {
-						sender.sendMessage(BanSystem.messages.getString("Playerdoesnotexist").replaceAll("%P%", BanSystem.PREFIX).replaceAll("&", "ง"));
+						sender.sendMessage(BanSystem.messages.getString("Playerdoesnotexist").replaceAll("%P%", BanSystem.PREFIX).replaceAll("&", "ยง"));
 						return;
 					}
-					if (bm.hashistory2(id)) {
+					if (bm.hashistory(id)) {
 						bm.sendHistorys(id, sender);
 					} else {
-						sender.sendMessage(BanSystem.messages.getString("History.historynotfound").replaceAll("%P%", BanSystem.PREFIX).replaceAll("&", "ง"));
+						sender.sendMessage(BanSystem.messages.getString("History.historynotfound").replaceAll("%P%", BanSystem.PREFIX).replaceAll("&", "ยง"));
 					}
 				} else {
-					sender.sendMessage(BanSystem.messages.getString("History.usage").replaceAll("%P%", BanSystem.PREFIX).replaceAll("&", "ง"));
+					sender.sendMessage(BanSystem.messages.getString("History.usage").replaceAll("%P%", BanSystem.PREFIX).replaceAll("&", "ยง"));
 				}
 			} else {
 				sender.sendMessage(BanSystem.NODBCONNECTION);

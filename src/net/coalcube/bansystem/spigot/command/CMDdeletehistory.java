@@ -17,7 +17,7 @@ import net.coalcube.bansystem.spigot.util.TabCompleteUtil;
 
 public class CMDdeletehistory implements CommandExecutor, TabExecutor {
 
-	Banmanager bm = new Banmanager();
+	private static Banmanager bm = BanSystem.getBanmanager();
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String lable, String[] args) {
@@ -27,33 +27,33 @@ public class CMDdeletehistory implements CommandExecutor, TabExecutor {
 					UUID id = UUIDFetcher.getUUID(args[0]);
 					if (id == null) {
 						sender.sendMessage(BanSystem.messages.getString("Playerdoesnotexist")
-								.replaceAll("%P%", BanSystem.PREFIX).replaceAll("&", "ง"));
+								.replaceAll("%P%", BanSystem.PREFIX).replaceAll("&", "ยง"));
 						return false;
 					}
-					if (bm.hashistory2(id)) {
+					if (bm.hashistory(id)) {
 						bm.clearHistory(id);
 						sender.sendMessage(BanSystem.messages.getString("Deletehistory.success")
 								.replaceAll("%P%", BanSystem.PREFIX).replaceAll("%player%", UUIDFetcher.getName(id))
-								.replaceAll("&", "ง"));
+								.replaceAll("&", "ยง"));
 						for (Player all : Bukkit.getOnlinePlayers()) {
 							if (all.hasPermission("bansys.notify") && all != sender) {
 								all.sendMessage(BanSystem.messages.getString("Deletehistory.notify")
 										.replaceAll("%P%", BanSystem.PREFIX)
 										.replaceAll("%player%", UUIDFetcher.getName(id))
-										.replaceAll("%sender%", sender.getName()).replaceAll("&", "ง"));
+										.replaceAll("%sender%", sender.getName()).replaceAll("&", "ยง"));
 							}
 						}
 						Bukkit.getConsoleSender().sendMessage(BanSystem.messages.getString("Deletehistory.notify")
 								.replaceAll("%P%", BanSystem.PREFIX).replaceAll("%player%", UUIDFetcher.getName(id))
-								.replaceAll("%sender%", sender.getName()).replaceAll("&", "ง"));
+								.replaceAll("%sender%", sender.getName()).replaceAll("&", "ยง"));
 						return true;
 					} else {
 						sender.sendMessage(BanSystem.messages.getString("History.historynotfound")
-								.replaceAll("%P%", BanSystem.PREFIX).replaceAll("&", "ง"));
+								.replaceAll("%P%", BanSystem.PREFIX).replaceAll("&", "ยง"));
 					}
 				} else {
 					sender.sendMessage(BanSystem.messages.getString("Deletehistory.usage")
-							.replaceAll("%P%", BanSystem.PREFIX).replaceAll("&", "ง"));
+							.replaceAll("%P%", BanSystem.PREFIX).replaceAll("&", "ยง"));
 				}
 			} else {
 				sender.sendMessage(BanSystem.NODBCONNECTION);

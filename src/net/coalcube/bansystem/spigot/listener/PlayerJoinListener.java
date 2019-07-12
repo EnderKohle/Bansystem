@@ -28,12 +28,14 @@ import net.md_5.bungee.api.chat.TextComponent;
 
 @SuppressWarnings("deprecation")
 public class PlayerJoinListener implements Listener {
+	
+	private static Banmanager bm = BanSystem.getBanmanager();
 	private static boolean banned;
+	
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void onPreLogin(PlayerPreLoginEvent e) {
 		boolean isCancelled = false;
 		if (BanSystem.mysql.isConnected()) {
-			Banmanager bm = new Banmanager();
 			if (bm.isBannedNetwork(e.getUniqueId())) {
 				if (bm.getEnd(e.getUniqueId(), bm.getReasonNetwork(e.getUniqueId())) > System.currentTimeMillis()
 						|| bm.getEnd(e.getUniqueId(), bm.getReasonNetwork(e.getUniqueId())) == -1) {
@@ -41,7 +43,7 @@ public class PlayerJoinListener implements Listener {
 					String component = BanSystem.Banscreen.replaceAll("%Reason%", bm.getReasonNetwork(e.getUniqueId()))
 							.replaceAll("%ReamingTime%",
 									bm.getRemainingTime(e.getUniqueId(), bm.getReasonNetwork(e.getUniqueId())))
-							.replaceAll("&", "§");
+							.replaceAll("&", "Â§");
 					if(!BanSystem.config.getBoolean("Ban.KickDelay.enable")) e.disallow(Result.KICK_BANNED, component);
 					banned = true;
 					isCancelled = true;
@@ -53,18 +55,18 @@ public class PlayerJoinListener implements Listener {
 					Bukkit.getConsoleSender()
 							.sendMessage(BanSystem.messages.getString("Ban.Network.autounban")
 									.replaceAll("%P%", BanSystem.PREFIX).replaceAll("%player%", e.getName())
-									.replaceAll("&", "§"));
+									.replaceAll("&", "Â§"));
 					for (Player all : Bukkit.getOnlinePlayers()) {
 						if (all.hasPermission("bansys.notify")) {
 							all.sendMessage(BanSystem.messages.getString("Ban.Network.autounban")
 									.replaceAll("%P%", BanSystem.PREFIX).replaceAll("%player%", e.getName())
-									.replaceAll("&", "§"));
+									.replaceAll("&", "Â§"));
 						}
 					}
 				}
 			}
 			if (!isCancelled) {
-				Bukkit.getScheduler().runTaskLaterAsynchronously(BanSystem.plugin, new Runnable() {
+				Bukkit.getScheduler().runTaskLaterAsynchronously(BanSystem.getInstance(), new Runnable() {
 
 					@Override
 					public void run() {
@@ -77,7 +79,7 @@ public class PlayerJoinListener implements Listener {
 									for (Player all : Bukkit.getOnlinePlayers()) {
 										all.sendMessage(BanSystem.messages.getString("VPN.warning")
 												.replaceAll("%P%", BanSystem.PREFIX)
-												.replaceAll("%player%", e.getName()).replaceAll("&", "§"));
+												.replaceAll("%player%", e.getName()).replaceAll("&", "Â§"));
 									}
 								}
 							}
@@ -100,18 +102,18 @@ public class PlayerJoinListener implements Listener {
 								if (BanSystem.config.getBoolean("IPautoban.enable")) {
 									new Banmanager().ban(e.getUniqueId(), BanSystem.config.getInt("IPautoban.banid"),
 											"CONSOLE", e.getAddress());
-									Bukkit.getConsoleSender().sendMessage(BanSystem.PREFIX + "§cDer 2. Account von §e"
-											+ names + " §cwurde automatisch gebannt für §e"
+									Bukkit.getConsoleSender().sendMessage(BanSystem.PREFIX + "Â§cDer 2. Account von Â§e"
+											+ names + " Â§cwurde automatisch gebannt fÃ¼r Â§e"
 											+ BanSystem.config.getString(
 													"IDs." + BanSystem.config.getInt("IPautoban.banid") + ".reason")
-											+ "§c.");
+											+ "Â§c.");
 									for (Player all : Bukkit.getOnlinePlayers()) {
 										if (all.hasPermission("bansys.notify")) {
-											all.sendMessage(BanSystem.PREFIX + "§cDer 2. Account von §e" + names
-													+ " §cwurde automatisch gebannt für §e"
+											all.sendMessage(BanSystem.PREFIX + "Â§cDer 2. Account von Â§e" + names
+													+ " Â§cwurde automatisch gebannt fÃ¼r Â§e"
 													+ BanSystem.config.getString("IDs."
 															+ BanSystem.config.getInt("IPautoban.banid") + ".reason")
-													+ "§c.");
+													+ "Â§c.");
 										}
 									}
 									String component = BanSystem.Banscreen
@@ -121,12 +123,12 @@ public class PlayerJoinListener implements Listener {
 									if(!BanSystem.config.getBoolean("Ban.KickDelay.enable")) e.disallow(Result.KICK_BANNED, component);
 									PlayerJoinListener.banned = true;
 								} else {
-									Bukkit.getConsoleSender().sendMessage(BanSystem.PREFIX + "§e" + e.getName()
-											+ " §cist womöglich ein 2. Account von §e" + names);
+									Bukkit.getConsoleSender().sendMessage(BanSystem.PREFIX + "Â§e" + e.getName()
+											+ " Â§cist womÃ¶glich ein 2. Account von Â§e" + names);
 									for (Player all : Bukkit.getOnlinePlayers()) {
 										if (all.hasPermission("bansys.notify")) {
-											all.sendMessage(BanSystem.PREFIX + "§e" + e.getName()
-													+ " §cist womöglich ein 2. Account von §e" + names);
+											all.sendMessage(BanSystem.PREFIX + "Â§e" + e.getName()
+													+ " Â§cist womÃ¶glich ein 2. Account von Â§e" + names);
 										}
 									}
 								}
@@ -140,23 +142,22 @@ public class PlayerJoinListener implements Listener {
 	@EventHandler
 	public void onDisconnect(PlayerQuitEvent e) {
 		Player p = e.getPlayer();
-		if (new Banmanager().isBannedNetwork(p.getUniqueId())) {
+		if (bm.isBannedNetwork(p.getUniqueId())) {
 			e.setQuitMessage(null);
 		}
 	}
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onJoin(PlayerJoinEvent e) {
 		Player p = e.getPlayer();
-		Banmanager bm = new Banmanager();
 		if (p.hasPermission("bansys.ban.admin")) {
 			try {
-				if (new UpdateChecker(BanSystem.plugin, 65863).checkForUpdates()) {
+				if (new UpdateChecker(BanSystem.getInstance(), 65863).checkForUpdates()) {
 
-					p.sendMessage(BanSystem.PREFIX + "§cEin neues Update ist verfügbar.");
+					p.sendMessage(BanSystem.PREFIX + "Â§cEin neues Update ist verfÃ¼gbar.");
 
 					TextComponent comp = new TextComponent();
 					comp.setText(BanSystem.PREFIX
-							+ "§7Lade es dir unter §ehttps://www.spigotmc.org/resources/bansystem-mit-ids.65863/ §7runter um aktuell zu bleiben.");
+							+ "Â§7Lade es dir unter Â§ehttps://www.spigotmc.org/resources/bansystem-mit-ids.65863/ Â§7runter um aktuell zu bleiben.");
 					comp.setClickEvent(new ClickEvent(Action.OPEN_URL,
 							"https://www.spigotmc.org/resources/bansystem-mit-ids.65863/"));
 					comp.setHoverEvent(new HoverEvent(
@@ -178,10 +179,10 @@ public class PlayerJoinListener implements Listener {
 					p.kickPlayer(BanSystem.Banscreen.replaceAll("%Reason%", bm.getReasonNetwork(p.getUniqueId()))
 							.replaceAll("%ReamingTime%",
 									bm.getRemainingTime(p.getUniqueId(), bm.getReasonNetwork(p.getUniqueId())))
-							.replaceAll("&", "§"));
+							.replaceAll("&", "Â§"));
 					
 				}
-			}.runTaskLater(BanSystem.plugin, 20*BanSystem.config.getInt("Ban.KickDelay.inSecconds"));
+			}.runTaskLater(BanSystem.getInstance(), 20*BanSystem.config.getInt("Ban.KickDelay.inSecconds"));
 		}
 	}
 }

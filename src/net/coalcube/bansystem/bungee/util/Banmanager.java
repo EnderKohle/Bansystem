@@ -9,14 +9,15 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.UUID;
 
-import net.coalcube.bansystem.bungee.BanSystem;
 import net.coalcube.bansystem.core.util.Type;
 import net.coalcube.bansystem.core.util.UUIDFetcher;
+import net.coalcube.bansystem.bungee.BanSystem;
 import net.md_5.bungee.api.CommandSender;
 
 public class Banmanager {
-
+	
 	public void ban(String grund, long seconds, String ersteller, Type type, UUID uuid, InetAddress ip) {
+		String id = UUID.randomUUID().toString().substring(0, 8);
 		long end;
 		long current = System.currentTimeMillis();
 		if (seconds == -1) {
@@ -25,33 +26,34 @@ public class Banmanager {
 			long millis = seconds * 1000;
 			end = current + millis;
 		}
+		Date date = new Date();
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
+		String zeitstempel = simpleDateFormat.format(date);
 		try {
 			if (ip != null)
 				ip = InetAddress.getByName(ip.toString().replaceAll("/", ""));
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
 		}
-		Date date = new Date();
-		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
-		String zeitstempel = simpleDateFormat.format(date);
-		BanSystem.mysql.update("INSERT INTO ban (UUID, Ende, Grund, Ersteller, IP, Type) VALUES ('" + uuid + "','" + end
-				+ "','" + grund + "','" + ersteller + "','" + ip + "','" + type + "')");
+		BanSystem.mysql.update("INSERT INTO ban (UUID, Ende, Grund, Ersteller, IP, Type, ID) VALUES ('" + uuid + "','" + end
+				+ "','" + grund + "','" + ersteller + "','" + ip + "','" + type + "', '" + id + "');");
 		if (ip != null) {
+			
 			BanSystem.mysql
-					.update("INSERT INTO `banhistory` (UUID, Ende, Grund, Ersteller, Erstelldatum, IP, Type, duration) "
+					.update("INSERT INTO `banhistory` (UUID, Ende, Grund, Ersteller, Erstelldatum, IP, Type, duration, ID) "
 							+ "VALUES ('" + uuid + "'," + "'" + end + "'," + "'" + grund + "'," + "'" + ersteller + "',"
 							+ "'"
 							+ zeitstempel
-							+ "'," + "'" + ip.getHostAddress() + "'," + "'" + type + "', '" + seconds + "');");
+							+ "'," + "'" + ip.getHostAddress() + "'," + "'" + type + "', '" + seconds + "', '" + id + "');");
 		} else
 			BanSystem.mysql
-					.update("INSERT INTO `banhistory` (UUID, Ende, Grund, Ersteller, Erstelldatum, Type, duration) "
+					.update("INSERT INTO `banhistory` (UUID, Ende, Grund, Ersteller, Erstelldatum, Type, duration, ID) "
 							+ "VALUES ('" + uuid + "'," + "'" + end + "'," + "'" + grund + "'," + "'" + ersteller + "',"
 							+ "'"
 							+ zeitstempel
-							+ "'," + "'" + type + "', '" + seconds + "');");
+							+ "'," + "'" + type + "', '" + seconds + "', '" + id + "');");
 	}
-
+	
 	public void ban(UUID uuid, int id, String ersteller, InetAddress ip) {
 		String reason = "";
 		byte lvl;
@@ -79,15 +81,35 @@ public class Banmanager {
 		}
 		ban(reason, dauer, ersteller, type, uuid, ip);
 	}
-
+	
 	public void unban(UUID id) {
 		BanSystem.mysql.update("DELETE FROM ban WHERE UUID='" + id + "' AND Type='" + Type.NETWORK + "'");
 	}
-
+	
+	public void unban(UUID id, String banid, UUID unbanner, String reason) {
+		BanSystem.mysql.update("DELETE FROM ban WHERE UUID='" + id + "' AND Type='" + Type.NETWORK + "'");
+		BanSystem.mysql.update("INSERT INTO `unban` (ID, unbanner, Grund) VALUES ('" + banid + "', '" + unbanner + "', '" + reason + "');");
+	}
+	
+	public void unban(UUID id, String banid, String unbanner, String reason) {
+		BanSystem.mysql.update("DELETE FROM ban WHERE UUID='" + id + "' AND Type='" + Type.NETWORK + "'");
+		BanSystem.mysql.update("INSERT INTO `unban` (ID, unbanner, Grund) VALUES ('" + banid + "', '" + unbanner + "', '" + reason + "');");
+	}
+	
 	public void unmute(UUID id) {
 		BanSystem.mysql.update("DELETE FROM ban WHERE UUID='" + id + "' AND Type='" + Type.CHAT + "'");
 	}
-
+	
+	public void unmute(UUID id, String banid, UUID unbanner, String reason) {
+		BanSystem.mysql.update("DELETE FROM ban WHERE UUID='" + id + "' AND Type='" + Type.CHAT + "'");
+		BanSystem.mysql.update("INSERT INTO `unmute` (ID, unbanner, Grund) VALUES ('" + banid + "', '" + unbanner + "', '" + reason + "');");
+	}
+	
+	public void unmute(UUID id, String banid, String unbanner, String reason) {
+		BanSystem.mysql.update("DELETE FROM ban WHERE UUID='" + id + "' AND Type='" + Type.CHAT + "'");
+		BanSystem.mysql.update("INSERT INTO `unmute` (ID, unbanner, Grund) VALUES ('" + banid + "', '" + unbanner + "', '" + reason + "');");
+	}
+	
 	public boolean isbanned(UUID id) {
 		ResultSet rs = BanSystem.mysql.getResult("SELECT UUID FROM `ban` WHERE UUID='" + id + "'");
 		try {
@@ -99,7 +121,7 @@ public class Banmanager {
 		}
 		return false;
 	}
-
+	
 	public String getReasonNetwork(UUID id) {
 		ResultSet rs = BanSystem.mysql
 				.getResult("SELECT Grund FROM `ban` WHERE UUID='" + id + "' AND Type='" + Type.NETWORK + "'");
@@ -112,7 +134,7 @@ public class Banmanager {
 		}
 		return "Kein Grund angegeben";
 	}
-
+	
 	public String getReasonChat(UUID id) {
 		ResultSet rs = BanSystem.mysql
 				.getResult("SELECT Grund FROM `ban` WHERE UUID='" + id + "' AND Type='" + Type.CHAT + "'");
@@ -125,7 +147,7 @@ public class Banmanager {
 		}
 		return "Kein Grund angegeben";
 	}
-
+	
 	public Long getEnd(UUID id, String Grund) {
 		try {
 			ResultSet rs = BanSystem.mysql
@@ -138,10 +160,10 @@ public class Banmanager {
 		}
 		return null;
 	}
-
-	public String getBanner(UUID id) {
+	
+	public String getBanner(UUID id, Type type) {
 		try {
-			ResultSet rs = BanSystem.mysql.getResult("SELECT Ersteller FROM `ban` WHERE UUID='" + id + "'");
+			ResultSet rs = BanSystem.mysql.getResult("SELECT Ersteller FROM `ban` WHERE UUID='" + id + "' and Type='"+type+"'");
 			while (rs.next()) {
 				return rs.getString("Ersteller");
 			}
@@ -150,26 +172,28 @@ public class Banmanager {
 		}
 		return "unbekannt";
 	}
-
+	
 	@SuppressWarnings("deprecation")
 	public void sendHistorys(UUID id, CommandSender sender) {
 		ResultSet rs = BanSystem.mysql.getResult(
 				"SELECT * FROM `banhistory` WHERE UUID='" + id + "'");
-		sender.sendMessage(BanSystem.PREFIX + "§8§m-------§8» §e" + UUIDFetcher.getName(id) + " §8«§m-------");
+		sender.sendMessage(BanSystem.PREFIX + "Â§8Â§m-------Â§8Â» Â§e" + UUIDFetcher.getName(id) + " Â§8Â«Â§m-------");
 
-		if (hashistory2(id)) {
+		if (hashistory(id)) {
 			try {
 				while (rs.next()) {
+					
 					sender.sendMessage(BanSystem.PREFIX);
-					sender.sendMessage(BanSystem.PREFIX + "§7Grund §8» §c" + rs.getString("Grund"));
-					sender.sendMessage(BanSystem.PREFIX + "§7Erstelldatum §8» §c" + rs.getString("Erstelldatum"));
-					sender.sendMessage(BanSystem.PREFIX + "§7Enddatum §8» §c"+new SimpleDateFormat("dd.MM.yyyy HH:mm:ss").format(new Date(rs.getLong("Ende"))));
-					sender.sendMessage(BanSystem.PREFIX + "§7Ersteller §8» §c" + rs.getString("Ersteller"));
-					sender.sendMessage(BanSystem.PREFIX + "§7IP §8» §c" + rs.getString("IP"));
-					sender.sendMessage(BanSystem.PREFIX + "§7Type §8» §c" + rs.getString("Type"));
-
+					sender.sendMessage(BanSystem.PREFIX + "Â§7Grund Â§8Â» Â§c" + rs.getString("Grund"));
+					sender.sendMessage(BanSystem.PREFIX + "Â§7Erstelldatum Â§8Â» Â§c" + rs.getString("Erstelldatum"));
+					sender.sendMessage(BanSystem.PREFIX + "Â§7Enddatum Â§8Â» Â§c"+new SimpleDateFormat("dd.MM.yyyy HH:mm:ss").format(new Date(rs.getLong("Ende"))));
+					sender.sendMessage(BanSystem.PREFIX + "Â§7Ersteller Â§8Â» Â§c" + rs.getString("Ersteller"));
+					sender.sendMessage(BanSystem.PREFIX + "Â§7IP Â§8Â» Â§c" + rs.getString("IP"));
+					sender.sendMessage(BanSystem.PREFIX + "Â§7Type Â§8Â» Â§c" + rs.getString("Type"));
+					sender.sendMessage(BanSystem.PREFIX + "Â§7ID Â§8Â» Â§c#" + rs.getString("ID"));
+					
 					long millis = rs.getLong("duration") * 1000;
-
+					
 					int seconds = 0;
 					int minutes = 0;
 					int hours = 0;
@@ -193,24 +217,24 @@ public class Banmanager {
 					String ramingTime = "";
 					if (millis != -1) {
 						if (days > 0) {
-							ramingTime = "§e" + days + " §cTag(e)" + (hours > 0 ? "§e" + hours + ", §cStunde(n)" : "")
-									+ (minutes > 0 ? ", §e" + minutes + " §cMinute(n)" : "")
-									+ (seconds > 0 ? "und §e" + seconds + " §cSekunde(n)" : "");
+							ramingTime = "Â§e" + days + " Â§cTag(e)" + (hours > 0 ? "Â§e" + hours + ", Â§cStunde(n)" : "")
+									+ (minutes > 0 ? ", Â§e" + minutes + " Â§cMinute(n)" : "")
+									+ (seconds > 0 ? "und Â§e" + seconds + " Â§cSekunde(n)" : "");
 						} else if (hours > 0) {
-							ramingTime = "§e" + hours + " §cStunde(n), §e" + minutes + " §cMinute(n) und §e" + seconds
-									+ " §cSekunde(n)";
+							ramingTime = "Â§e" + hours + " Â§cStunde(n), Â§e" + minutes + " Â§cMinute(n) und Â§e" + seconds
+									+ " Â§cSekunde(n)";
 						} else if (minutes > 0) {
-							ramingTime = "§e" + minutes + " §cMinute(n) und §e" + seconds + " §cSekunde(n)";
+							ramingTime = "Â§e" + minutes + " Â§cMinute(n) und Â§e" + seconds + " Â§cSekunde(n)";
 						} else {
-							ramingTime = "§e" + seconds + " §cSekunde(n)";
+							ramingTime = "Â§e" + seconds + " Â§cSekunde(n)";
 						}
 					} else {
-						ramingTime = "§4§lPERMANENT";
+						ramingTime = "Â§4Â§lPERMANENT";
 					}
 
-					sender.sendMessage(BanSystem.PREFIX + "§7Dauer §8» §c" + ramingTime);
+					sender.sendMessage(BanSystem.PREFIX + "Â§7Dauer Â§8Â» Â§c" + ramingTime);
 					sender.sendMessage(BanSystem.PREFIX);
-					sender.sendMessage(BanSystem.PREFIX + "§8§m------------------------");
+					sender.sendMessage(BanSystem.PREFIX + "Â§8Â§m------------------------");
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -219,7 +243,7 @@ public class Banmanager {
 			sender.sendMessage(BanSystem.messages.getString("History.historynotfound"));
 		}
 	}
-
+	
 	public String getRemainingTime(UUID id, String reason) {
 		long current = System.currentTimeMillis();
 		long end = getEnd(id, reason);
@@ -248,22 +272,22 @@ public class Banmanager {
 		String ramingTime = "";
 		if (end != -1) {
 			if (days > 0) {
-				ramingTime = "§e" + days + " §cTag(e), §e" + hours + " §cStunde(n), §e" + minutes
-						+ " §cMinute(n) und §e" + seconds + " §cSekunde(n)";
+				ramingTime = "Â§e" + days + " Â§cTag(e), Â§e" + hours + " Â§cStunde(n), Â§e" + minutes
+						+ " Â§cMinute(n) und Â§e" + seconds + " Â§cSekunde(n)";
 			} else if (hours > 0) {
-				ramingTime = "§e" + hours + " §cStunde(n), §e" + minutes + " §cMinute(n) und §e" + seconds
-						+ " §cSekunde(n)";
+				ramingTime = "Â§e" + hours + " Â§cStunde(n), Â§e" + minutes + " Â§cMinute(n) und Â§e" + seconds
+						+ " Â§cSekunde(n)";
 			} else if (minutes > 0) {
-				ramingTime = "§e" + minutes + " §cMinute(n) und §e" + seconds + " §cSekunde(n)";
+				ramingTime = "Â§e" + minutes + " Â§cMinute(n) und Â§e" + seconds + " Â§cSekunde(n)";
 			} else {
-				ramingTime = "§e" + seconds + " §cSekunde(n)";
+				ramingTime = "Â§e" + seconds + " Â§cSekunde(n)";
 			}
 		} else {
-			ramingTime = "§4§lPERMANENT";
+			ramingTime = "Â§4Â§lPERMANENT";
 		}
 		return ramingTime;
 	}
-
+	
 	public boolean hashistory(UUID id, String reason) {
 		ResultSet rs = BanSystem.mysql
 				.getResult("SELECT UUID FROM `banhistory` WHERE UUID='" + id + "' AND Grund='" + reason + "'");
@@ -276,11 +300,11 @@ public class Banmanager {
 		}
 		return false;
 	}
-
+	
 	public void clearHistory(UUID uuid) {
 		BanSystem.mysql.update("DELETE FROM banhistory WHERE UUID='" + uuid + "'");
 	}
-
+	
 	public String getCreatedate(UUID id) {
 		ResultSet rs = BanSystem.mysql.getResult("SELECT Erstelldatum FROM `banhistory` WHERE UUID='" + id + "'");
 		try {
@@ -290,10 +314,10 @@ public class Banmanager {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return "§cNicht vorhanden!";
+		return "Â§cNicht vorhanden!";
 	}
-
-	public boolean hashistory2(UUID id) {
+	
+	public boolean hashistory(UUID id) {
 		ResultSet rs = BanSystem.mysql.getResult("SELECT UUID FROM `banhistory` WHERE UUID='" + id + "'");
 		try {
 			while (rs.next()) {
@@ -305,7 +329,7 @@ public class Banmanager {
 		return false;
 
 	}
-
+	
 	public byte getLevel(UUID id, String reason) {
 		ResultSet rs = BanSystem.mysql
 				.getResult("SELECT UUID FROM `banhistory` WHERE UUID='" + id + "' AND Grund='" + reason + "'");
@@ -319,7 +343,7 @@ public class Banmanager {
 		}
 		return i;
 	}
-
+	
 	public Type getType(UUID id, String reason) {
 		ResultSet rs = BanSystem.mysql
 				.getResult("SELECT Type FROM `ban` WHERE UUID='" + id + "' AND Grund='" + reason + "'");
@@ -332,7 +356,7 @@ public class Banmanager {
 		}
 		return null;
 	}
-
+	
 	public boolean needUUDAndIP(UUID id) {
 		ResultSet rs = BanSystem.mysql.getResult("SELECT UUID,IP FROM `ban` WHERE UUID='" + id + "'");
 		try {
@@ -346,7 +370,7 @@ public class Banmanager {
 		}
 		return false;
 	}
-
+	
 	public ArrayList<InetAddress> getIPs() {
 		ArrayList<InetAddress> IPs = new ArrayList<>();
 		ResultSet rs = BanSystem.mysql.getResult("SELECT IP FROM `ban`");
@@ -363,7 +387,7 @@ public class Banmanager {
 		}
 		return IPs;
 	}
-
+	
 	public ArrayList<UUID> getBannedPlayers(InetAddress ip) {
 		ArrayList<UUID> banned = new ArrayList<>();
 		try {
@@ -376,7 +400,7 @@ public class Banmanager {
 		}
 		return banned;
 	}
-
+	
 	public boolean isBannedChat(UUID id) {
 		ResultSet rs = BanSystem.mysql
 				.getResult("SELECT UUID FROM `ban` WHERE UUID='" + id + "' AND Type='" + Type.CHAT + "'");
@@ -389,7 +413,7 @@ public class Banmanager {
 		}
 		return false;
 	}
-
+	
 	public boolean isBannedNetwork(UUID id) {
 		ResultSet rs = BanSystem.mysql
 				.getResult("SELECT UUID FROM `ban` WHERE UUID='" + id + "' AND Type='" + Type.NETWORK + "'");
@@ -402,7 +426,7 @@ public class Banmanager {
 		}
 		return false;
 	}
-
+	
 	public boolean needIP(UUID uniqueId) {
 		ResultSet rs = BanSystem.mysql.getResult("SELECT IP FROM ban WHERE UUID = '" + uniqueId + "'");
 		try {
@@ -414,9 +438,22 @@ public class Banmanager {
 		}
 		return false;
 	}
-
+	
 	public void setIP(UUID uniqueId, InetAddress address) {
 		BanSystem.mysql
 				.update("UPDATE ban SET IP = '" + address.getHostAddress() + "' WHERE UUID = '" + uniqueId + "'");
 	}
+	
+	public String getID(UUID uniqueId, Type type) {
+		ResultSet rs = BanSystem.mysql.getResult("SELECT ID FROM ban WHERE UUID = '" + uniqueId + "' and Type = '" + type + "'");
+		try {
+			while(rs.next()) {
+				return rs.getString("ID");
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
 }

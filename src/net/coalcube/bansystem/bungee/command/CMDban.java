@@ -3,8 +3,8 @@ package net.coalcube.bansystem.bungee.command;
 import java.util.UUID;
 
 import net.coalcube.bansystem.bungee.BanSystem;
-import net.coalcube.bansystem.bungee.util.Banmanager;
 import net.coalcube.bansystem.bungee.util.TabCompleteUtil;
+import net.coalcube.bansystem.bungee.util.Banmanager;
 import net.coalcube.bansystem.core.util.Type;
 import net.coalcube.bansystem.core.util.UUIDFetcher;
 import net.md_5.bungee.api.CommandSender;
@@ -15,7 +15,7 @@ import net.md_5.bungee.api.plugin.TabExecutor;
 
 public class CMDban extends Command implements TabExecutor {
 
-	private Banmanager banmanager = new Banmanager();
+	private static Banmanager banmanager = BanSystem.getBanmanager();
 
 	public CMDban(String name) {
 		super(name);
@@ -35,7 +35,7 @@ public class CMDban extends Command implements TabExecutor {
 					id = UUIDFetcher.getUUID(args[0]);
 					if (id == null) {
 						sender.sendMessage(
-								BanSystem.messages.getString("Playerdoesnotexist").replaceAll("%P%", BanSystem.PREFIX).replaceAll("&", "ง"));
+								BanSystem.messages.getString("Playerdoesnotexist").replaceAll("%P%", BanSystem.PREFIX).replaceAll("&", "ยง"));
 						return;
 					}
 				}
@@ -43,7 +43,7 @@ public class CMDban extends Command implements TabExecutor {
 				if (args.length == 2) {
 					if (!BanSystem.config.getSection("IDs").getKeys().contains(args[1])) {
 						sender.sendMessage(
-								BanSystem.messages.getString("Ban.invalidinput").replaceAll("%P%", BanSystem.PREFIX).replaceAll("&", "ง"));
+								BanSystem.messages.getString("Ban.invalidinput").replaceAll("%P%", BanSystem.PREFIX).replaceAll("&", "ยง"));
 						reason = null;
 						return;
 					}
@@ -52,7 +52,7 @@ public class CMDban extends Command implements TabExecutor {
 							if (BanSystem.config.getBoolean("IDs." + key + ".onlyAdmins")) {
 								if (!sender.hasPermission("bansys.ban.admin")) {
 									sender.sendMessage(BanSystem.messages.getString("Ban.onlyadmins").replaceAll("%P%",
-											BanSystem.PREFIX).replaceAll("&", "ง"));
+											BanSystem.PREFIX).replaceAll("&", "ยง"));
 									return;
 								}
 							}
@@ -90,16 +90,16 @@ public class CMDban extends Command implements TabExecutor {
 									.replaceAll("%reason%", BanSystem.config.getString("IDs." + key + ".reason"))
 									.replaceAll("%P%", BanSystem.PREFIX)
 									.replaceAll("%type%", BanSystem.config.getString("IDs." + key + ".type"))
-									.replaceAll("&", "ง"));
+									.replaceAll("&", "ยง"));
 						} else 
 							sender.sendMessage(BanSystem.messages.getString("Ban.ID.Listlayout.IDs.general")
 								.replaceAll("%ID%", key)
 								.replaceAll("%reason%", BanSystem.config.getString("IDs." + key + ".reason"))
 								.replaceAll("%P%", BanSystem.PREFIX)
 								.replaceAll("%type%", BanSystem.config.getString("IDs." + key + ".type"))
-								.replaceAll("&", "ง"));
+								.replaceAll("&", "ยง"));
 					}
-					sender.sendMessage(BanSystem.messages.getString("Ban.usage").replaceAll("%P%", BanSystem.PREFIX).replaceAll("&", "ง"));
+					sender.sendMessage(BanSystem.messages.getString("Ban.usage").replaceAll("%P%", BanSystem.PREFIX).replaceAll("&", "ยง"));
 				}
 			} else {
 				sender.sendMessage(BanSystem.NODBCONNECTION);
@@ -118,7 +118,7 @@ public class CMDban extends Command implements TabExecutor {
 				ProxiedPlayer target = ProxyServer.getInstance().getPlayer(id);
 				if (target.hasPermission("bansys.ban") && !sender.hasPermission("bansys.ban.admin")) {
 					sender.sendMessage(BanSystem.messages.getString("Ban.cannotbanteammembers").replaceAll("%P%",
-								BanSystem.PREFIX).replaceAll("&", "ง"));
+								BanSystem.PREFIX).replaceAll("&", "ยง"));
 					return;
 				} else {
 					banmanager.ban(reason, dauer, ersteller, type, target.getUniqueId(),
@@ -129,19 +129,19 @@ public class CMDban extends Command implements TabExecutor {
 							BanSystem.Banscreen
 							.replaceAll("%Reason%", banmanager.getReasonNetwork(id))
 							.replaceAll("%ReamingTime%", banmanager.getRemainingTime(id, banmanager.getReasonNetwork(id)))
-							.replaceAll("&", "ง"));
+							.replaceAll("&", "ยง"));
 				} else {
 					for (String message : BanSystem.messages.getStringList("Ban.Chat.Screen")) {
 						target.sendMessage(message.replaceAll("%P%", BanSystem.PREFIX).replaceAll("%reason%", reason)
-								.replaceAll("%reamingtime%", banmanager.getRemainingTime(id, reason)).replaceAll("&", "ง"));
+								.replaceAll("%reamingtime%", banmanager.getRemainingTime(id, reason)).replaceAll("&", "ยง"));
 					}
 				}
 				sender.sendMessage(BanSystem.messages.getString("Ban.success").replaceAll("%P%", BanSystem.PREFIX)
-						.replaceAll("%Player%", target.getDisplayName()).replaceAll("%reason%", reason).replaceAll("&", "ง"));
+						.replaceAll("%Player%", target.getDisplayName()).replaceAll("%reason%", reason).replaceAll("&", "ยง"));
 			} else {
 				banmanager.ban(reason, dauer, ersteller, type, id, null);
 				sender.sendMessage(BanSystem.messages.getString("Ban.success").replaceAll("%P%", BanSystem.PREFIX)
-						.replaceAll("%Player%", UUIDFetcher.getName(id)).replaceAll("%reason%", reason).replaceAll("&", "ง"));
+						.replaceAll("%Player%", UUIDFetcher.getName(id)).replaceAll("%reason%", reason).replaceAll("&", "ยง"));
 			}
 			for (String message : BanSystem.messages.getStringList("Ban.notify")) {
 				ProxyServer.getInstance().getConsole()
@@ -149,7 +149,7 @@ public class CMDban extends Command implements TabExecutor {
 								.replaceAll("%player%", UUIDFetcher.getName(id)).replaceAll("%reason%", reason)
 								.replaceAll("%reamingTime%", banmanager.getRemainingTime(id, reason))
 								.replaceAll("%banner%", ersteller).replaceAll("%type%", type.toString())
-								.replaceAll("&", "ง"));
+								.replaceAll("&", "ยง"));
 			}
 			for (ProxiedPlayer all : ProxyServer.getInstance().getPlayers()) {
 				if (all.hasPermission("bansys.notify") && (all != sender)) {
@@ -158,13 +158,13 @@ public class CMDban extends Command implements TabExecutor {
 								.replaceAll("%player%", UUIDFetcher.getName(id)).replaceAll("%reason%", reason)
 								.replaceAll("%reamingTime%", banmanager.getRemainingTime(id, reason))
 								.replaceAll("%banner%", ersteller).replaceAll("%type%", type.toString())
-								.replaceAll("&", "ง"));
+								.replaceAll("&", "ยง"));
 					}
 				}
 			}
 		} else {
 			sender.sendMessage(BanSystem.messages.getString("Ban.alreadybanned").replaceAll("%P%", BanSystem.PREFIX)
-					.replaceAll("%player%", UUIDFetcher.getName(id)).replaceAll("&", "ง"));
+					.replaceAll("%player%", UUIDFetcher.getName(id)).replaceAll("&", "ยง"));
 		}
 	}
 

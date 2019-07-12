@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -13,13 +14,15 @@ import org.bukkit.entity.Player;
 import net.coalcube.bansystem.spigot.BanSystem;
 import net.coalcube.bansystem.spigot.util.Banmanager;
 import net.coalcube.bansystem.spigot.util.TabCompleteUtil;
+import net.coalcube.bansystem.core.util.Type;
 import net.coalcube.bansystem.core.util.UUIDFetcher;
 
 public class CMDunmute implements CommandExecutor, TabExecutor {
 
+	private static Banmanager bm = BanSystem.getBanmanager();
+	
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String lable, String[] args) {
-		Banmanager bm = new Banmanager();
 		if (sender.hasPermission("bansys.unmute")) {
 			if (BanSystem.mysql.isConnected()) {
 				if (args.length == 1) {
@@ -30,28 +33,72 @@ public class CMDunmute implements CommandExecutor, TabExecutor {
 						return false;
 					}
 					if (bm.isBannedChat(id)) {
-						bm.unmute(id);
-						sender.sendMessage(BanSystem.messages.getString("Unmute.success")
-								.replaceAll("%P%", BanSystem.PREFIX).replaceAll("%player%", UUIDFetcher.getName(id)));
-						for (Player all : Bukkit.getOnlinePlayers()) {
-							if (all.hasPermission("bansys.notify") && all != sender) {
-								all.sendMessage(BanSystem.messages.getString("Unmute.notify")
-										.replaceAll("%P%", BanSystem.PREFIX)
-										.replaceAll("%player%", UUIDFetcher.getName(id))
-										.replaceAll("%sender%", sender.getName()).replaceAll("&", "ง"));
+						if(args.length > 1 && BanSystem.config.getBoolean("needReason.Unmute")) {
+							
+							String reason = "";
+							for (int i = 1; i < args.length; i++) {
+								reason = reason + args[i] + " ";
 							}
+							
+							sender.sendMessage(ChatColor.translateAlternateColorCodes('&', 
+									BanSystem.messages.getString("Unmute.needreason.success")
+									.replaceAll("%P%", BanSystem.PREFIX)
+									.replaceAll("%player%", UUIDFetcher.getName(id))
+									.replaceAll("%reason%", reason)));
+							for (Player all : Bukkit.getOnlinePlayers()) {
+								if (all.hasPermission("bansys.notify") && all != sender) {
+									all.sendMessage(ChatColor.translateAlternateColorCodes('&', 
+											BanSystem.messages.getString("Unmute.needreason.notify")
+													.replaceAll("%P%", BanSystem.PREFIX)
+													.replaceAll("%player%", UUIDFetcher.getName(id))
+													.replaceAll("%sender%", sender.getName())
+													.replaceAll("%reason%", reason)));
+								}
+							}
+							Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', 
+									BanSystem.messages.getString("Unmute.needreason.notify")
+									.replaceAll("%P%", BanSystem.PREFIX)
+									.replaceAll("%player%", UUIDFetcher.getName(id))
+									.replaceAll("%sender%", sender.getName())
+									.replaceAll("%reason%", reason)));
+							
+							if(sender instanceof Player) {
+								Player p = (Player) sender;
+								bm.unmute(id, bm.getID(id, Type.CHAT), p.getUniqueId() , reason);
+							} else
+								bm.unmute(id, bm.getID(id, Type.CHAT), sender.getName(), reason);
+							
+						} else {
+							
+							sender.sendMessage(BanSystem.messages.getString("Unmute.success")
+									.replaceAll("%P%", BanSystem.PREFIX).replaceAll("%player%", UUIDFetcher.getName(id)));
+							for (Player all : Bukkit.getOnlinePlayers()) {
+								if (all.hasPermission("bansys.notify") && all != sender) {
+									all.sendMessage(ChatColor.translateAlternateColorCodes('&', 
+											BanSystem.messages.getString("Unmute.notify")
+													.replaceAll("%P%", BanSystem.PREFIX)
+													.replaceAll("%player%", UUIDFetcher.getName(id))
+													.replaceAll("%sender%", sender.getName())
+													.replaceAll("&", "ยง")));
+								}
+							}
+							Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', 
+									BanSystem.messages.getString("Unmute.notify")
+									.replaceAll("%P%", BanSystem.PREFIX)
+									.replaceAll("%player%", UUIDFetcher.getName(id))
+									.replaceAll("%sender%", sender.getName())));
+							
+							bm.unmute(id);
+							
 						}
-						Bukkit.getConsoleSender().sendMessage(BanSystem.messages.getString("Unmute.notify")
-								.replaceAll("%P%", BanSystem.PREFIX).replaceAll("%player%", UUIDFetcher.getName(id))
-								.replaceAll("%sender%", sender.getName()).replaceAll("&", "ง"));
 					} else {
 						sender.sendMessage(
 								BanSystem.messages.getString("Unmute.notmuted").replaceAll("%P%", BanSystem.PREFIX)
-										.replaceAll("%player%", UUIDFetcher.getName(id)).replaceAll("&", "ง"));
+										.replaceAll("%player%", UUIDFetcher.getName(id)).replaceAll("&", "ยง"));
 					}
 				} else {
 					sender.sendMessage(BanSystem.messages.getString("Unmute.usage").replaceAll("%P%", BanSystem.PREFIX)
-							.replaceAll("&", "ง"));
+							.replaceAll("&", "ยง"));
 				}
 			} else {
 				sender.sendMessage(BanSystem.NODBCONNECTION);

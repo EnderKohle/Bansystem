@@ -3,8 +3,8 @@ package net.coalcube.bansystem.bungee.command;
 import java.util.UUID;
 
 import net.coalcube.bansystem.bungee.BanSystem;
-import net.coalcube.bansystem.bungee.util.Banmanager;
 import net.coalcube.bansystem.bungee.util.TabCompleteUtil;
+import net.coalcube.bansystem.bungee.util.Banmanager;
 import net.coalcube.bansystem.core.util.UUIDFetcher;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
@@ -18,7 +18,7 @@ public class CMDdeletehistory extends Command implements TabExecutor {
 		super(name);
 	}
 
-	Banmanager bm = new Banmanager();
+	private static Banmanager bm = BanSystem.getBanmanager();
 
 	@SuppressWarnings("deprecation")
 	@Override
@@ -29,31 +29,31 @@ public class CMDdeletehistory extends Command implements TabExecutor {
 					UUID id = UUIDFetcher.getUUID(args[0]);
 					if (id == null) {
 						sender.sendMessage(
-								BanSystem.messages.getString("Playerdoesnotexist").replaceAll("%P%", BanSystem.PREFIX).replaceAll("&", "ง"));
+								BanSystem.messages.getString("Playerdoesnotexist").replaceAll("%P%", BanSystem.PREFIX).replaceAll("&", "ยง"));
 						return;
 					}
-					if (bm.hashistory2(id)) {
+					if (bm.hashistory(id)) {
 						bm.clearHistory(id);
-						sender.sendMessage(BanSystem.messages.getString("Deletehistory.success").replaceAll("%P%", BanSystem.PREFIX).replaceAll("%player%", UUIDFetcher.getName(id)).replaceAll("&", "ง"));
+						sender.sendMessage(BanSystem.messages.getString("Deletehistory.success").replaceAll("%P%", BanSystem.PREFIX).replaceAll("%player%", UUIDFetcher.getName(id)).replaceAll("&", "ยง"));
 						for (ProxiedPlayer all : ProxyServer.getInstance().getPlayers()) {
 							if (all.hasPermission("bansys.notify") && all != sender) {
 								all.sendMessage(BanSystem.messages.getString("Deletehistory.notify")
 										.replaceAll("%P%", BanSystem.PREFIX)
 										.replaceAll("%player%", UUIDFetcher.getName(id))
 										.replaceAll("%sender%", sender.getName())
-										.replaceAll("&", "ง"));
+										.replaceAll("&", "ยง"));
 							}
 						}
 						ProxyServer.getInstance().getConsole().sendMessage(BanSystem.messages.getString("Deletehistory.notify")
 								.replaceAll("%P%", BanSystem.PREFIX)
 								.replaceAll("%player%", UUIDFetcher.getName(id))
 								.replaceAll("%sender%", sender.getName())
-								.replaceAll("&", "ง"));
+								.replaceAll("&", "ยง"));
 					} else {
-						sender.sendMessage(BanSystem.messages.getString("History.historynotfound").replaceAll("%P%", BanSystem.PREFIX).replaceAll("&", "ง"));
+						sender.sendMessage(BanSystem.messages.getString("History.historynotfound").replaceAll("%P%", BanSystem.PREFIX).replaceAll("&", "ยง"));
 					}
 				} else {
-					sender.sendMessage(BanSystem.messages.getString("Deletehistory.usage").replaceAll("%P%", BanSystem.PREFIX).replaceAll("&", "ง"));
+					sender.sendMessage(BanSystem.messages.getString("Deletehistory.usage").replaceAll("%P%", BanSystem.PREFIX).replaceAll("&", "ยง"));
 				}
 			} else {
 				sender.sendMessage(BanSystem.NODBCONNECTION);

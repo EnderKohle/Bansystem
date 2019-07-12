@@ -15,7 +15,7 @@ import net.coalcube.bansystem.core.util.UUIDFetcher;
 
 public class CMDhistory implements CommandExecutor, TabExecutor {
 
-	Banmanager bm = new Banmanager();
+	private static Banmanager bm = BanSystem.getBanmanager();
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String lable, String[] args) {
@@ -25,19 +25,19 @@ public class CMDhistory implements CommandExecutor, TabExecutor {
 					UUID id = UUIDFetcher.getUUID(args[0]);
 					if (id == null) {
 						sender.sendMessage(BanSystem.messages.getString("Playerdoesnotexist")
-								.replaceAll("%P%", BanSystem.PREFIX).replaceAll("&", "ง"));
+								.replaceAll("%P%", BanSystem.PREFIX).replaceAll("&", "ยง"));
 						return false;
 					}
-					if (bm.hashistory2(id)) {
+					if (bm.hashistory(id)) {
 						bm.sendHistorys(id, sender);
 						return true;
 					} else {
 						sender.sendMessage(BanSystem.messages.getString("History.historynotfound")
-								.replaceAll("%P%", BanSystem.PREFIX).replaceAll("&", "ง"));
+								.replaceAll("%P%", BanSystem.PREFIX).replaceAll("&", "ยง"));
 					}
 				} else {
 					sender.sendMessage(BanSystem.messages.getString("History.usage").replaceAll("%P%", BanSystem.PREFIX)
-							.replaceAll("&", "ง"));
+							.replaceAll("&", "ยง"));
 				}
 			} else {
 				sender.sendMessage(BanSystem.NODBCONNECTION);

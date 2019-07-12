@@ -18,11 +18,11 @@ public class CMDkick extends Command implements TabExecutor {
 	@SuppressWarnings("deprecation")
 	public static void noReasonKick(CommandSender p, ProxiedPlayer target) {
 		target.disconnect(BanSystem.messages.getString("Kick.noreason.screen")
-				.replaceAll("&", "ง"));
+				.replaceAll("&", "ยง"));
 		p.sendMessage(BanSystem.messages.getString("Kick.success")
 				.replaceAll("%P%", BanSystem.PREFIX)
 				.replaceAll("%player%", target.getDisplayName())
-				.replaceAll("&", "ง"));
+				.replaceAll("&", "ยง"));
 
 		for (ProxiedPlayer all : ProxyServer.getInstance().getPlayers()) {
 			if (all.hasPermission("bansys.notify") && all != p) {
@@ -30,7 +30,7 @@ public class CMDkick extends Command implements TabExecutor {
 					all.sendMessage(message.replaceAll("%P%", BanSystem.PREFIX)
 							.replaceAll("%player%", target.getDisplayName())
 							.replaceAll("%sender%", p.getName())
-							.replaceAll("&", "ง"));
+							.replaceAll("&", "ยง"));
 				}
 			}
 		}
@@ -41,7 +41,7 @@ public class CMDkick extends Command implements TabExecutor {
 		p.sendMessage(BanSystem.messages.getString("Kick.success")
 				.replaceAll("%P%", BanSystem.PREFIX)
 				.replaceAll("%player%", target.getDisplayName())
-				.replaceAll("&", "ง"));
+				.replaceAll("&", "ยง"));
 		String msg = "";
 		for (int i = 1; i < args.length; i++) {
 			msg = msg + args[i] + " ";
@@ -57,7 +57,7 @@ public class CMDkick extends Command implements TabExecutor {
 									.replaceAll("%player%", target.getDisplayName())
 									.replaceAll("%sender%", p.getName())
 									.replaceAll("%reason%", msg)
-									.replaceAll("&", "ง"));
+									.replaceAll("&", "ยง"));
 				}
 			}
 		}
@@ -87,16 +87,16 @@ public class CMDkick extends Command implements TabExecutor {
 
 								} else {
 									p.sendMessage(BanSystem.messages.getString("Kick.cannotkickteammembers")
-											.replaceAll("%P%", BanSystem.PREFIX).replaceAll("&", "ง"));
+											.replaceAll("%P%", BanSystem.PREFIX).replaceAll("&", "ยง"));
 								}
 							}
 						} else {
 							p.sendMessage(BanSystem.messages.getString("Kick.cannotkickyouselfe").replaceAll("%P%",
-									BanSystem.PREFIX).replaceAll("&", "ง"));
+									BanSystem.PREFIX).replaceAll("&", "ยง"));
 						}
 					} else {
 						p.sendMessage(
-								BanSystem.messages.getString("PlayerNotFound").replaceAll("%P%", BanSystem.PREFIX).replaceAll("&", "ง"));
+								BanSystem.messages.getString("PlayerNotFound").replaceAll("%P%", BanSystem.PREFIX).replaceAll("&", "ยง"));
 					}
 				} else if (args.length > 1) {
 					ProxiedPlayer target = ProxyServer.getInstance().getPlayer(args[0]);
@@ -111,19 +111,19 @@ public class CMDkick extends Command implements TabExecutor {
 
 								} else {
 									p.sendMessage(BanSystem.messages.getString("Kick.cannotkickteammembers")
-											.replaceAll("%P%", BanSystem.PREFIX).replaceAll("&", "ง"));
+											.replaceAll("%P%", BanSystem.PREFIX).replaceAll("&", "ยง"));
 								}
 							}
 						} else {
 							p.sendMessage(BanSystem.messages.getString("Kick.cannotkickyouselfe").replaceAll("%P%",
-									BanSystem.PREFIX).replaceAll("&", "ง"));
+									BanSystem.PREFIX).replaceAll("&", "ยง"));
 						}
 					} else {
 						p.sendMessage(
-								BanSystem.messages.getString("PlayerNotFound").replaceAll("%P%", BanSystem.PREFIX).replaceAll("&", "ง"));
+								BanSystem.messages.getString("PlayerNotFound").replaceAll("%P%", BanSystem.PREFIX).replaceAll("&", "ยง"));
 					}
 				} else {
-					p.sendMessage(BanSystem.messages.getString("Kick.usage").replaceAll("%P%", BanSystem.PREFIX).replaceAll("&", "ง"));
+					p.sendMessage(BanSystem.messages.getString("Kick.usage").replaceAll("%P%", BanSystem.PREFIX).replaceAll("&", "ยง"));
 				}
 			} else {
 				p.sendMessage(BanSystem.NODBCONNECTION);
