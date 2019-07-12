@@ -69,6 +69,8 @@ public class BanSystemSpigot extends JavaPlugin implements BanSystem {
 	@Override
 	public void onEnable() {
 		
+		BanSystem.setInstance(this);
+		
 		instance = this;
 		
 		banmanager = new Banmanager();
